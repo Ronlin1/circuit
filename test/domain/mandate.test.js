@@ -18,6 +18,16 @@ test('rejects invalid financial caps', () => {
   assert.throws(() => createDraftMandate({ name: 'Bad', allowedAssets: ['BNB'], maxOrderUsd: 10, maxDailySpendUsd: 5 }), /maxDailySpendUsd/);
 });
 
+test('rejects unsupported abnormal market policies instead of weakening drift enforcement', () => {
+  assert.throws(() => createDraftMandate({
+    name: 'Unsafe policy',
+    allowedAssets: ['BNB'],
+    maxOrderUsd: 10,
+    maxDailySpendUsd: 30,
+    abnormalMarketPolicy: 'ALLOW'
+  }), /abnormalMarketPolicy/);
+});
+
 test('activation returns an immutable active mandate', () => {
   const draft = createDraftMandate({ name: 'Safe', allowedAssets: ['BNB'], maxOrderUsd: 10, maxDailySpendUsd: 30 });
   const active = activateMandate(draft, '2026-09-03T12:00:00.000Z');

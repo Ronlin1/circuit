@@ -16,12 +16,18 @@ async function serveStatic(req,res){
   try{const body=await readFile(path);res.writeHead(200,{'content-type':MIME[extname(path)]??'application/octet-stream','cache-control':'no-cache'});res.end(body);}catch{return sendJson(res,404,{ok:false,error:{code:'NOT_FOUND'}});}
 }
 
+function httpError(error){
+  if(error instanceof TypeError) return {status:400,code:'INPUT_VALIDATION_ERROR',message:error.message};
+  if(Number.isInteger(error?.statusCode)) return {status:error.statusCode,code:String(error.message||'REQUEST_ERROR'),message:String(error.message||'CIRCUIT rejected the request.')};
+  return {status:500,code:'INTERNAL_ERROR',message:'CIRCUIT could not complete the request.'};
+}
+
 export function createHttpServer(services){
   return http.createServer(async(req,res)=>{
     try{if(req.url?.startsWith('/api/')) await routeRequest(req,res,services); else if(new URL(req.url,'http://circuit.local').pathname==='/mcp/circuit') await handleCircuitMcp(req,res,services); else await serveStatic(req,res);}catch(error){
       if(res.headersSent){res.end();return;}
-      const status=error.statusCode??500;
-      sendJson(res,status,{ok:false,error:{code:status===500?'INTERNAL_ERROR':error.message,message:status===500?'CIRCUIT could not complete the request.':error.message}});
+      const classified=httpError(error);
+      sendJson(res,classified.status,{ok:false,error:{code:classified.code,message:classified.message}});
     }
   });
 }

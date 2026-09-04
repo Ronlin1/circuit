@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { DEFAULT_MANDATE, PRODUCTS } from './constants.js';
 
+const ABNORMAL_MARKET_POLICIES = Object.freeze(['REVIEW', 'PAUSE']);
 const upperUnique = (items) => [...new Set((items ?? []).map((value) => String(value).trim().toUpperCase()).filter(Boolean))];
 const positive = (value, name) => {
   if (!Number.isFinite(value) || value <= 0) throw new TypeError(`${name} must be a positive number`);
@@ -9,6 +10,11 @@ const positive = (value, name) => {
 const percent = (value, name) => {
   if (!Number.isFinite(value) || value < 0 || value > 100) throw new TypeError(`${name} must be between 0 and 100`);
   return value;
+};
+const enumValue = (value, allowed, name) => {
+  const normalized = String(value).trim().toUpperCase();
+  if (!allowed.includes(normalized)) throw new TypeError(`${name} must be one of: ${allowed.join(', ')}`);
+  return normalized;
 };
 const deepFreeze = (value) => {
   if (value && typeof value === 'object' && !Object.isFrozen(value)) {
@@ -48,7 +54,7 @@ export function createDraftMandate(input = {}) {
     maxOrdersPerWindow: { count: orders.count, windowSeconds: orders.windowSeconds },
     maxEvidenceAgeMs: positive(Number(input.maxEvidenceAgeMs ?? DEFAULT_MANDATE.maxEvidenceAgeMs), 'maxEvidenceAgeMs'),
     duplicateIntentWindowMs: positive(Number(input.duplicateIntentWindowMs ?? DEFAULT_MANDATE.duplicateIntentWindowMs), 'duplicateIntentWindowMs'),
-    abnormalMarketPolicy: input.abnormalMarketPolicy ?? DEFAULT_MANDATE.abnormalMarketPolicy,
+    abnormalMarketPolicy: enumValue(input.abnormalMarketPolicy ?? DEFAULT_MANDATE.abnormalMarketPolicy, ABNORMAL_MARKET_POLICIES, 'abnormalMarketPolicy'),
     uncertainSettlementPolicy: 'PAUSE',
     createdAt: now
   };

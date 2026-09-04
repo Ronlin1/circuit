@@ -36,6 +36,26 @@ test('compile returns DRAFT and activation is a separate explicit call', async()
   assert.equal(activated.body.data.status,'ACTIVE');
 }));
 
+test('invalid control-plane input maps to stable HTTP 400 validation errors', async()=>withServer(async(base)=>{
+  const compiled=await json(`${base}/api/mandates/compile`,{method:'POST',body:JSON.stringify({text:''})});
+  assert.equal(compiled.status,400);
+  assert.equal(compiled.body.ok,false);
+  assert.equal(compiled.body.error.code,'INPUT_VALIDATION_ERROR');
+}));
+
+test('mandate activation distinguishes missing mandates from activation conflicts', async()=>withServer(async(base)=>{
+  const missing=await json(`${base}/api/mandates/does-not-exist/activate`,{method:'POST',body:'{}'});
+  assert.equal(missing.status,404);
+  assert.equal(missing.body.error.code,'MANDATE_NOT_FOUND');
+
+  const compiled=await json(`${base}/api/mandates/compile`,{method:'POST',body:JSON.stringify({text:'Spot only. Assets: BNB, USDT. Maximum $7 per order and $21 per day.'})});
+  const first=await json(`${base}/api/mandates/${compiled.body.data.id}/activate`,{method:'POST',body:'{}'});
+  assert.equal(first.status,200);
+  const second=await json(`${base}/api/mandates/${compiled.body.data.id}/activate`,{method:'POST',body:'{}'});
+  assert.equal(second.status,409);
+  assert.equal(second.body.error.code,'MANDATE_ACTIVATION_CONFLICT');
+}));
+
 test('scenario run writes traces and exposes runtime state', async()=>withServer(async(base)=>{
   const run=await json(`${base}/api/scenarios/oversize-order/run`,{method:'POST',body:'{}'});
   assert.equal(run.status,200);

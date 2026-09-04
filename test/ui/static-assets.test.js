@@ -7,7 +7,7 @@ import { createHttpServer } from '../../src/server/http.js';
 const scenarios=['safe-spot-buy','oversize-order','forbidden-futures','duplicate-retry-loop','frequency-breaker','stale-evidence','regime-drift','prompt-injection'];
 
 test('mission control exposes required semantic hooks and all attack controls', async()=>{
-  const html=await readFile(new URL('../../public/index.html',import.meta.url),'utf8');
+  const html=await readFile(new URL('../../public/mission-control/index.html',import.meta.url),'utf8');
   assert.match(html,/CIRCUIT/);
   assert.match(html,/Runtime Control Plane for Agentic Finance/);
   for(const id of ['environment-badge','runtime-state','mandate-card','runtime-health','activity-timeline','trace-inspector']) assert.match(html,new RegExp(`id=["']${id}["']`));
@@ -15,7 +15,10 @@ test('mission control exposes required semantic hooks and all attack controls', 
 });
 
 test('brand system is black, yellow and white with accessible semantic tokens', async()=>{
-  const css=await readFile(new URL('../../public/styles.css',import.meta.url),'utf8');
+  const [css,productCss]=await Promise.all([
+    readFile(new URL('../../public/styles.css',import.meta.url),'utf8'),
+    readFile(new URL('../../public/product.css',import.meta.url),'utf8'),
+  ]);
   assert.match(css,/--bg:\s*#0[0-9a-f]{5}/i);
   assert.match(css,/--accent:\s*#f0b90b/i);
   assert.match(css,/--text:\s*#f[0-9a-f]{5}/i);
@@ -31,11 +34,12 @@ test('HTTP server serves the mission control shell and assets', async()=>{
   try{
     const page=await fetch(base); assert.equal(page.status,200); assert.match(await page.text(),/CIRCUIT/);
     const css=await fetch(`${base}/styles.css`); assert.equal(css.status,200); assert.match(css.headers.get('content-type'),/text\/css/);
+    const productCss=await fetch(`${base}/product.css`); assert.equal(productCss.status,200); assert.match(productCss.headers.get('content-type'),/text\/css/);
   } finally { await new Promise(resolve=>server.close(resolve)); services.close(); }
 });
 
 test('mission control exposes the MCP-native agent interface without execution controls', async()=>{
-  const html=await readFile(new URL('../../public/index.html',import.meta.url),'utf8');
+  const html=await readFile(new URL('../../public/mission-control/index.html',import.meta.url),'utf8');
   assert.match(html,/AGENT INTERFACE/);
   assert.match(html,/\/mcp\/circuit/);
   assert.match(html,/MCP 2026-07-28/);

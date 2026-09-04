@@ -80,4 +80,5 @@ test('release artifact packaging includes Netlify deployment files',async()=>{
   const workflow=await readFile(new URL('../../.github/workflows/ci.yml',import.meta.url),'utf8');
   assert.match(workflow,/^\s+netlify\s*$/m);
   assert.match(workflow,/^\s+netlify\.toml\s*$/m);
+  assert.match(workflow,/^\s+\.github\/workflows\/ci\.yml\s*$/m);
 });

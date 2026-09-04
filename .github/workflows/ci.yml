@@ -28,6 +28,7 @@ jobs:
             test
             netlify
             netlify.toml
+            .github/workflows/ci.yml
             README.md
             SECURITY.md
             LICENSE

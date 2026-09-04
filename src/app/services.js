@@ -7,7 +7,7 @@ import { BinanceMcpAdapter } from '../adapters/binance-mcp.js';
 import { ExecutionGateway } from '../execution/gateway.js';
 import { SseHub } from '../server/sse.js';
 
-export function createAppServices({dbPath=':memory:',mode='simulation',now=new Date().toISOString(),adapter:providedAdapter,mcpConfig={}}={}) {
+export function createAppServices({dbPath=':memory:',mode='simulation',now=new Date().toISOString(),adapter:providedAdapter,mcpConfig={},realtime=true}={}) {
   const persistence=createSqlitePersistence(dbPath);
   const recorder=new FlightRecorder(persistence);
   const runtimeStore=new RuntimeStore();
@@ -21,7 +21,7 @@ export function createAppServices({dbPath=':memory:',mode='simulation',now=new D
   let currentMandateId=seed.id;
 
   return {
-    mode:String(mode).toUpperCase(), now, persistence, recorder, runtimeStore, adapter, gateway, events, mandates,
+    mode:String(mode).toUpperCase(), realtime:Boolean(realtime), now, persistence, recorder, runtimeStore, adapter, gateway, events, mandates,
     getCurrentMandate(){return mandates.get(currentMandateId)??null;},
     getMandate(id){return mandates.get(id)??null;},
     storeMandate(mandate){mandates.set(mandate.id,mandate);return mandate;},

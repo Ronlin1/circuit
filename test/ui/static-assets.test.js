@@ -42,3 +42,9 @@ test('mission control exposes the MCP-native agent interface without execution c
   const panel=html.match(/<article[^>]+agent-interface-panel[\s\S]*?<\/article>/)?.[0]??'';
   assert.doesNotMatch(panel,/execute|recover|activate/i);
 });
+
+test('mission control only opens SSE when the transport advertises realtime support', async()=>{
+  const js=await readFile(new URL('../../public/app.js',import.meta.url),'utf8');
+  assert.match(js,/realtime\s*!==\s*false/);
+  assert.match(js,/new EventSource\(['"]\/api\/events['"]\)/);
+});

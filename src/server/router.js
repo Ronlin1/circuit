@@ -15,7 +15,7 @@ async function readJson(req,maxBytes=65_536){
 
 export async function routeRequest(req,res,services){
   const url=new URL(req.url,'http://circuit.local'); const path=url.pathname;
-  if(req.method==='GET'&&path==='/api/health') return sendJson(res,200,{ok:true,data:{status:'ready',mode:services.mode,adapter:services.adapter.constructor.name,traceChain:verifyTraceChain(services.recorder.list()).valid}});
+  if(req.method==='GET'&&path==='/api/health') return sendJson(res,200,{ok:true,data:{status:'ready',mode:services.mode,adapter:services.adapter.constructor.name,traceChain:verifyTraceChain(services.recorder.list()).valid,realtime:services.realtime!==false}});
   if(req.method==='GET'&&path==='/api/events') return services.events.connect(res);
   if(req.method==='GET'&&path==='/api/scenarios') return sendJson(res,200,{ok:true,data:SCENARIOS});
   if(req.method==='GET'&&path==='/api/mandates/current') return sendJson(res,200,{ok:true,data:services.getCurrentMandate()});

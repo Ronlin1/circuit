@@ -1,0 +1,8 @@
+# Example remote MCP registrations for a supported Codex client.
+# Keep OAuth credentials in the client's secure credential store; never commit them here.
+
+[mcp_servers.binance]
+url = "https://agent.binance.com/mcp/agentic"
+
+[mcp_servers.circuit]
+url = "https://circuit-agent-os.netlify.app/mcp/circuit"

@@ -14,3 +14,24 @@ jobs:
         with:
           node-version: 22.16.0
       - run: npm run verify
+      - name: Package verified release source
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: circuit-release-source
+          path: |
+            package.json
+            src
+            public
+            scripts
+            docs
+            test
+            README.md
+            SECURITY.md
+            LICENSE
+            Dockerfile
+            .env.example
+            .dockerignore
+            .gitignore
+          if-no-files-found: error
+          retention-days: 1

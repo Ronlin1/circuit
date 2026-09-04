@@ -112,6 +112,12 @@ export async function handleCircuitMcp(req,res,services) {
   const method=rpc?.method;
   if(rpc?.jsonrpc!=='2.0'||typeof method!=='string') return sendRpcError(res,id,-32600,'Invalid JSON-RPC request.');
 
+  const headerVersion=String(req.headers['mcp-protocol-version']??'').trim();
+  const headerMethod=String(req.headers['mcp-method']??'').trim();
+  if(headerVersion===MODERN_VERSION&&headerMethod&&headerMethod!==method) {
+    return sendRpcError(res,id,-32600,'mcp-method header does not match JSON-RPC method.',{headerMethod,method},400,MODERN_VERSION);
+  }
+
   if(method==='initialize') {
     const requested=rpc.params?.protocolVersion;
     if(requested!==LEGACY_VERSION) return sendRpcError(res,id,-32022,'UnsupportedProtocolVersion',{supported:[MODERN_VERSION,LEGACY_VERSION]},200,null);
@@ -122,7 +128,7 @@ export async function handleCircuitMcp(req,res,services) {
     return res.end();
   }
 
-  const version=String(req.headers['mcp-protocol-version']??rpc.params?._meta?.['io.modelcontextprotocol/protocolVersion']??'');
+  const version=String(headerVersion||rpc.params?._meta?.['io.modelcontextprotocol/protocolVersion']??'');
   const modern=version===MODERN_VERSION;
   const legacy=!version;
   if(!modern&&!legacy) return sendRpcError(res,id,-32022,'UnsupportedProtocolVersion',{supported:[MODERN_VERSION,LEGACY_VERSION]});

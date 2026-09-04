@@ -26,6 +26,8 @@ jobs:
             scripts
             docs
             test
+            netlify
+            netlify.toml
             README.md
             SECURITY.md
             LICENSE

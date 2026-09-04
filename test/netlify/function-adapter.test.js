@@ -74,3 +74,10 @@ test('repository contains a Netlify function and publish configuration for API a
     assert.equal(syntax.status,0,syntax.stderr||syntax.stdout);
   }finally{await rm(scratch,{recursive:true,force:true});}
 });
+
+test('release artifact packaging includes Netlify deployment files',async()=>{
+  const {readFile}=await import('node:fs/promises');
+  const workflow=await readFile(new URL('../../.github/workflows/ci.yml',import.meta.url),'utf8');
+  assert.match(workflow,/^\s+netlify\s*$/m);
+  assert.match(workflow,/^\s+netlify\.toml\s*$/m);
+});

@@ -9,7 +9,8 @@ const PUBLIC_DIR=fileURLToPath(new URL('../../public/',import.meta.url));
 const MIME={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.svg':'image/svg+xml'};
 async function serveStatic(req,res){
   const url=new URL(req.url,'http://circuit.local');
-  const requestPath=url.pathname==='/'?'index.html':url.pathname.replace(/^\/+/, '');
+  const rawPath=url.pathname==='/'?'':url.pathname.replace(/^\/+/, '');
+  const requestPath=rawPath===''?'index.html':rawPath.endsWith('/')?`${rawPath}index.html`:rawPath;
   const safe=normalize(requestPath).replace(/^(\.\.(\/|\\|$))+/, '');
   const path=join(PUBLIC_DIR,safe);
   if(!path.startsWith(PUBLIC_DIR)) return sendJson(res,404,{ok:false,error:{code:'NOT_FOUND'}});

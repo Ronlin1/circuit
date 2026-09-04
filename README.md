@@ -16,9 +16,33 @@
 
 > **Binance Agent OS gives AI agents execution. CIRCUIT gives users runtime control.**
 
+<p align="center">
+  <a href="https://circuit-agent-os.netlify.app"><strong>🌐 Live Demo</strong></a> ·
+  <a href="https://circuit-agent-os.netlify.app/mission-control/"><strong>🛰 Mission Control</strong></a> ·
+  <a href="https://circuit-agent-os.netlify.app/simulation/"><strong>🧪 Simulation Lab</strong></a> ·
+  <a href="https://circuit-agent-os.netlify.app/live-agents/"><strong>🤖 Live Agents Guide</strong></a>
+</p>
+
 CIRCUIT continuously verifies that an autonomous financial agent is still acting inside the user’s activated **Financial Mandate**, behavioral envelope, evidence-freshness requirements, and market assumptions **before execution is allowed**.
 
 Built for the **Binance Agent OS Mini Hackathon — Track A**, CIRCUIT is not another market-prediction chatbot. It is supervisory infrastructure for safer autonomous financial workflows.
+
+---
+
+## 🌐 Product experience
+
+The hosted demo is intentionally split into focused surfaces so a judge or operator can understand CIRCUIT without hunting through one giant dashboard:
+
+| Page | Purpose |
+|---|---|
+| **Home** | Product thesis, control-loop visual, and proof points |
+| **Mission Control** | Active mandate, runtime health, MCP supervisor, breaker, and Flight Recorder |
+| **Simulation Lab** | Eight deterministic adversarial scenarios with expected vs actual verdicts |
+| **How it Works** | Financial Mandate → Policy Engine → Runtime Drift → Execution Gateway → Flight Recorder |
+| **Live Agents** | MCP integration path plus the explicit real-money production hardening boundary |
+| **About** | CIRCUIT origin story, thesis, and design principles |
+
+The public Netlify deployment is **simulation-first**. It does not contain trading credentials and does not enable live financial execution.
 
 ---
 

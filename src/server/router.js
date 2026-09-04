@@ -23,7 +23,19 @@ export async function routeRequest(req,res,services){
     const body=await readJson(req); const draft=compileMandate(body.text); services.storeMandate(draft); return sendJson(res,201,{ok:true,data:draft});
   }
   let match=path.match(/^\/api\/mandates\/([^/]+)\/activate$/);
-  if(req.method==='POST'&&match){await readJson(req);try{const active=services.activate(match[1],services.now);services.events.publish('mandate',active);return sendJson(res,200,{ok:true,data:active});}catch{return sendJson(res,404,{ok:false,error:{code:'MANDATE_NOT_FOUND'}});}}
+  if(req.method==='POST'&&match){
+    await readJson(req);
+    const mandate=services.getMandate(match[1]);
+    if(!mandate) return sendJson(res,404,{ok:false,error:{code:'MANDATE_NOT_FOUND'}});
+    try{
+      const active=services.activate(match[1],services.now);
+      services.events.publish('mandate',active);
+      return sendJson(res,200,{ok:true,data:active});
+    }catch(error){
+      if(error instanceof TypeError) return sendJson(res,409,{ok:false,error:{code:'MANDATE_ACTIVATION_CONFLICT',message:error.message}});
+      throw error;
+    }
+  }
   match=path.match(/^\/api\/mandates\/([^/]+)$/);
   if(req.method==='GET'&&match){const mandate=services.getMandate(match[1]);return mandate?sendJson(res,200,{ok:true,data:mandate}):sendJson(res,404,{ok:false,error:{code:'MANDATE_NOT_FOUND'}});}
   if(req.method==='POST'&&path==='/api/intents/evaluate'){

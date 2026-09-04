@@ -38,6 +38,23 @@ test('modern MCP discovery advertises CIRCUIT as a stateless tool server', async
   assert.equal(response.body.result._meta['io.modelcontextprotocol/serverInfo'].name,'circuit-runtime-control');
 }));
 
+test('modern MCP rejects a routing-header method that disagrees with the JSON-RPC body', async()=>withServer(async(base)=>{
+  const response=await fetch(`${base}/mcp/circuit`,{
+    method:'POST',
+    headers:{
+      'content-type':'application/json',
+      'accept':'application/json, text/event-stream',
+      'mcp-protocol-version':'2026-07-28',
+      'mcp-method':'tools/list'
+    },
+    body:JSON.stringify({jsonrpc:'2.0',id:11,method:'tools/call',params:{name:'circuit_status',arguments:{}}})
+  });
+  assert.equal(response.status,400);
+  const body=await response.json();
+  assert.equal(body.error.code,-32600);
+  assert.match(body.error.message,/mcp-method/i);
+}));
+
 test('tools/list exposes only advisory control-plane capabilities', async()=>withServer(async(base)=>{
   const response=await mcp(base,'tools/list');
   assert.equal(response.status,200);

@@ -184,6 +184,28 @@ Live execution is deliberately restricted in v1:
 
 ---
 
+## 🤖 CIRCUIT Supervisor Agent
+
+Phase 1 adds an explicit agent orchestration layer on top of the control plane. The planner can propose a typed financial intent, but it never receives Binance execution access. CIRCUIT evaluates the proposal first; `BLOCK`, `REVIEW`, and `PAUSE` terminate the run, while `ALLOW` / `RESIZE` still stop at a separate human approval gate before execution.
+
+Run the deterministic proof locally:
+
+```bash
+npm run agent:demo
+```
+
+Expected proof:
+
+```text
+$100 BNB -> BLOCK -> ORDER_CAP_EXCEEDED
+$8 BNB -> ALLOW -> AWAITING_APPROVAL
+Binance executions: 0
+```
+
+For the real Binance Agent OS read-only proof, use the supported-host profile in [`agent/CIRCUIT_SUPERVISOR.md`](agent/CIRCUIT_SUPERVISOR.md) and the exact runbook in [`docs/AGENT_OS_LIVE_DEMO.md`](docs/AGENT_OS_LIVE_DEMO.md). The safe capability probe is available as `npm run agent:probe`; it lists advertised MCP capabilities only and never invokes a Binance write tool.
+
+---
+
 ## 🚀 Quick start
 
 **Requirements:** Node.js **22.16+**.

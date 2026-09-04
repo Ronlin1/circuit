@@ -24,6 +24,7 @@ jobs:
             src
             public
             scripts
+            agent
             docs
             test
             netlify

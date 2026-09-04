@@ -128,7 +128,7 @@ export async function handleCircuitMcp(req,res,services) {
     return res.end();
   }
 
-  const version=String(headerVersion||rpc.params?._meta?.['io.modelcontextprotocol/protocolVersion']??'');
+  const version=String(headerVersion || (rpc.params?._meta?.['io.modelcontextprotocol/protocolVersion'] ?? ''));
   const modern=version===MODERN_VERSION;
   const legacy=!version;
   if(!modern&&!legacy) return sendRpcError(res,id,-32022,'UnsupportedProtocolVersion',{supported:[MODERN_VERSION,LEGACY_VERSION]});

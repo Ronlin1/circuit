@@ -1,6 +1,6 @@
-import { execFileSync } from 'node:child_process';
 import { readFileSync, statSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
+import { repositoryFiles } from './repository-files.js';
 
 const RULES=[
   {name:'GITHUB_TOKEN',regex:/\b(?:ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b/g},
@@ -16,10 +16,9 @@ export function scanText(text,file='unknown'){
   for(const rule of RULES){rule.regex.lastIndex=0;let match;while((match=rule.regex.exec(text))){const value=rule.valueGroup?match[rule.valueGroup]:match[0];if(SAFE_VALUES.has(String(value).toLowerCase()))continue;findings.push({file,line:lineOf(text,match.index),rule:rule.name});if(match.index===rule.regex.lastIndex)rule.regex.lastIndex++;}}
   return findings;
 }
-function trackedFiles(){return execFileSync('git',['ls-files','-z'],{encoding:'utf8'}).split('\0').filter(Boolean);}
 export function scanRepository(){
   const findings=[];
-  for(const file of trackedFiles()){
+  for(const file of repositoryFiles()){
     try{if(statSync(file).size>1_000_000)continue;const text=readFileSync(file,'utf8');findings.push(...scanText(text,file));}catch{}
   }
   return findings;

@@ -13,9 +13,11 @@
     "secret:scan": "node scripts/secret-scan.js",
     "scenario:verify": "node scripts/verify-scenarios.js",
     "verify": "npm test && npm run check:syntax && npm run secret:scan && npm run scenario:verify && npm run smoke:local",
-    "smoke:local": "node scripts/smoke-http.js"
+    "smoke:local": "node scripts/smoke-http.js",
+    "agent:demo": "node scripts/run-supervisor-demo.js",
+    "agent:probe": "node scripts/agent-os-probe.js"
   },
-  "description": "CIRCUIT \u2014 an MCP-native runtime control plane that continuously verifies autonomous financial agents before execution.",
+  "description": "CIRCUIT — an MCP-native runtime control plane that continuously verifies autonomous financial agents before execution.",
   "license": "MIT",
   "author": "Ronald Atuhaire",
   "repository": {

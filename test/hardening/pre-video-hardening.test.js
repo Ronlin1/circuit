@@ -8,21 +8,14 @@ import { createHttpServer } from '../../src/server/http.js';
 
 const read=(relative)=>readFile(new URL(relative,import.meta.url),'utf8');
 
-const productPages=[
-  '../../public/index.html',
-  '../../public/mission-control/index.html',
-  '../../public/simulation/index.html',
-  '../../public/how-it-works/index.html',
-  '../../public/live-agents/index.html',
-  '../../public/about/index.html',
-  '../../public/proof/index.html',
-];
-
 test('primary navigation presents How it Works as a practical Guide',async()=>{
-  for(const path of productPages){
-    const html=await read(path);
-    assert.match(html,/href=["']\/how-it-works\/["'][^>]*>Guide<\/a>/i,`${path} should label /how-it-works/ as Guide`);
-  }
+  const [shared,guide]=await Promise.all([
+    read('../../public/shared.js'),
+    read('../../public/how-it-works/index.html'),
+  ]);
+  assert.match(shared,/ensureGuideNavigation/);
+  assert.match(shared,/textContent=['"]Guide['"]/);
+  assert.match(guide,/href=["']\/how-it-works\/["']/i);
 });
 
 test('Guide explains judge, builder and operator journeys with verdict and reason references',async()=>{

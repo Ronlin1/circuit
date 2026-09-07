@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { compileMandate } from '../mandate/compiler.js';
 import { createActionIntent } from '../domain/intent.js';
 import { runScenario } from '../scenarios/runner.js';
@@ -13,10 +14,58 @@ async function readJson(req,maxBytes=65_536){
   try{return JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{throw Object.assign(new Error('INVALID_JSON'),{statusCode:400});}
 }
 
+function liveSymbol(value='BNBUSDT'){
+  const symbol=String(value).trim().toUpperCase();
+  if(symbol!=='BNBUSDT') throw new TypeError('live market demo supports BNBUSDT only');
+  return symbol;
+}
+
+async function evaluateLiveSimulation(body,services){
+  const requestedUsd=Number(body.requestedUsd);
+  if(!Number.isFinite(requestedUsd)||requestedUsd<=0) throw new TypeError('requestedUsd must be positive');
+  const symbol='BNBUSDT';
+  const market=await services.marketDataProvider(symbol);
+  const now=services.currentTime();
+  const nonce=randomUUID();
+  const intent=createActionIntent({
+    agentId:`live-market-${nonce}`,
+    semanticIntentId:`live-market-bnb-buy-${nonce}`,
+    userIntentMode:'TRANSACT',
+    action:'BUY',
+    product:'SPOT',
+    symbol,
+    asset:'BNB',
+    quoteAsset:'USDT',
+    requestedUsd,
+    rationale:'Public read-only Binance Spot market evidence with CIRCUIT simulation/default account-state assumptions. Evaluation only; no execution.',
+    createdAt:now,
+  });
+  const mandate=services.getCurrentMandate();
+  const trace=await services.gateway.evaluate(intent,{mandate,now,scenarioContext:{
+    price:market.price,
+    observedAt:market.observedAt,
+    tickerObservedAt:market.tickerObservedAt,
+    bookObservedAt:market.observedAt,
+    spreadBps:market.spreadBps,
+  }});
+  services.events.publish('trace',trace);
+  services.events.publish('runtime',{agentId:intent.agentId,state:services.gateway.runtimeState(intent.agentId)});
+  return {market,trace,accountState:'SIMULATION_DEFAULTS',binanceWrites:0,executionAttempted:false};
+}
+
 export async function routeRequest(req,res,services){
   const url=new URL(req.url,'http://circuit.local'); const path=url.pathname;
   if(req.method==='GET'&&path==='/api/health') return sendJson(res,200,{ok:true,data:{status:'ready',mode:services.mode,adapter:services.adapter.constructor.name,traceChain:verifyTraceChain(services.recorder.list()).valid,realtime:services.realtime!==false}});
   if(req.method==='GET'&&path==='/api/events') return services.events.connect(res);
+  if(req.method==='GET'&&path==='/api/market/live'){
+    const market=await services.marketDataProvider(liveSymbol(url.searchParams.get('symbol')??'BNBUSDT'));
+    return sendJson(res,200,{ok:true,data:market});
+  }
+  if(req.method==='POST'&&path==='/api/live-simulation/evaluate'){
+    const body=await readJson(req);
+    const data=await evaluateLiveSimulation(body,services);
+    return sendJson(res,200,{ok:true,data});
+  }
   if(req.method==='GET'&&path==='/api/scenarios') return sendJson(res,200,{ok:true,data:SCENARIOS});
   if(req.method==='GET'&&path==='/api/mandates/current') return sendJson(res,200,{ok:true,data:services.getCurrentMandate()});
   if(req.method==='POST'&&path==='/api/mandates/compile'){

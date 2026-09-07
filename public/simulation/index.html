@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#070707"><meta name="description" content="Run CIRCUIT deterministic adversarial scenarios."><title>Simulation Lab — CIRCUIT</title><link rel="icon" href="/assets/circuit-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/product.css"><link rel="stylesheet" href="/judge.css"></head><body><a class="skip-link" href="#main">Skip to main content</a><div class="ambient ambient-a" aria-hidden="true"></div><div class="ambient ambient-b" aria-hidden="true"></div><header class="site-header">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#070707"><meta name="description" content="Run CIRCUIT against live Binance market evidence and deterministic adversarial scenarios."><title>Simulation Lab — CIRCUIT</title><link rel="icon" href="/assets/circuit-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/product.css"><link rel="stylesheet" href="/judge.css"><link rel="stylesheet" href="/live-market.css"></head><body><a class="skip-link" href="#main">Skip to main content</a><div class="ambient ambient-a" aria-hidden="true"></div><div class="ambient ambient-b" aria-hidden="true"></div><header class="site-header">
   <a class="site-brand" href="/" aria-label="CIRCUIT home"><img src="/assets/circuit-mark.svg" alt=""><span><strong>CIRCUIT</strong><small>Runtime Control Plane for Agentic Finance</small></span></a>
   <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation"><span></span><span></span></button><nav class="site-nav" aria-label="Primary navigation">
     <a href="/">Home</a><a href="/mission-control/">Mission Control</a><a href="/simulation/">Simulation</a><a href="/proof/">Proof</a><a href="/how-it-works/">How it Works</a><a href="/live-agents/">Live Agents</a><a href="/about/">About</a>
@@ -7,10 +7,36 @@
   <div class="nav-status"><span class="live-indicator" data-live-indicator><i></i><b>LIVE DEMO</b></span></div>
 </header><main id="main" class="site-main content-page simulation-page">
   <section class="page-hero simulation-hero">
-    <p class="eyebrow">ADVERSARIAL SIMULATION</p>
+    <p class="eyebrow">ADVERSARIAL + LIVE SIMULATION</p>
     <h1>Attack the agent.<br><span>Watch CIRCUIT contain it.</span></h1>
-    <p>Eight deterministic scenarios exercise the same Financial Mandate, policy, drift, and Flight Recorder boundaries used by Mission Control. No profit prediction. No live funds.</p>
+    <p>Evaluate hypothetical actions against live BNB/USDT market evidence, or reproduce eight deterministic safety scenarios. No profit prediction. No live funds. No trade execution.</p>
   </section>
+
+  <section id="live-market-simulation" class="panel live-market-panel" aria-labelledby="live-market-title">
+    <div class="live-market-heading">
+      <div><p class="eyebrow">LIVE MARKET SIMULATION</p><h2 id="live-market-title">Real market movement. Real CIRCUIT verdict. Zero execution.</h2><p>Market prices update continuously from Binance public Spot feeds. Press Evaluate Live Intent to fetch a fresh server-side Binance snapshot and send that evidence through CIRCUIT's deterministic policy pipeline.</p></div>
+      <span id="live-stream-status" class="live-stream-status" data-state="connecting"><i></i><b>CONNECTING</b></span>
+    </div>
+    <div class="live-boundary" aria-label="Evidence boundary"><span><b>LIVE BINANCE MARKET DATA</b> public read-only feed</span><span><b>SIMULATED/DEFAULT ACCOUNT STATE</b> no live balance or portfolio</span><span><b>ZERO BINANCE WRITES</b> evaluation endpoint cannot trade</span></div>
+    <div class="live-market-grid">
+      <article class="live-quote-card">
+        <div class="live-symbol-row"><span>BNB / USDT</span><small id="live-market-source">BINANCE PUBLIC SPOT</small></div>
+        <strong id="live-market-price" class="live-price">—</strong>
+        <div class="quote-pair"><div><span>BEST BID</span><strong id="live-market-bid">—</strong></div><div><span>BEST ASK</span><strong id="live-market-ask">—</strong></div></div>
+        <div class="quote-meta"><span>Spread <b id="live-market-spread">—</b></span><span>Evidence age <b id="live-market-age">—</b></span></div>
+        <p class="live-feed-note">The moving quote is visual market telemetry. Every evaluation independently fetches a fresh server-side snapshot so CIRCUIT does not trust browser-supplied prices.</p>
+      </article>
+      <article class="live-intent-card">
+        <div class="live-intent-head"><div><span>HYPOTHETICAL INTENT</span><strong>BUY BNB · SPOT</strong></div><span class="write-zero">WRITES 0</span></div>
+        <label class="live-amount-label" for="live-intent-usd">Requested USD</label>
+        <div class="live-amount-row"><span>$</span><input id="live-intent-usd" type="number" inputmode="decimal" min="0.01" step="0.01" value="8" aria-describedby="live-intent-help"><button id="evaluate-live-intent" class="button-primary" type="button">Evaluate Live Intent</button></div>
+        <small id="live-intent-help">Try $8 for a compliant proposal or $100 to exceed the active $10 order / $30 daily caps.</small>
+        <div id="live-simulation-result" class="live-simulation-result" data-state="idle" aria-live="polite"><span class="result-icon">◇</span><strong>Awaiting evaluation</strong><p>CIRCUIT will fetch fresh read-only Binance market evidence, record a Flight Recorder trace, and return a deterministic verdict without executing the action.</p></div>
+      </article>
+    </div>
+    <div class="live-proof-foot"><span>PUBLIC WEB DEMO</span><p>This live page uses Binance public market-data infrastructure. The separate <a href="/proof/">Agent OS Proof</a> documents our verified Binance Agent OS MCP run.</p></div>
+  </section>
+
   <section id="judge-mode" class="panel judge-mode-panel">
     <div><p class="eyebrow">JUDGE MODE</p><h2>One click. Eight controls. Expected versus actual.</h2><p>Run the complete canonical adversarial suite in sequence. Judge Mode does not change the scenarios—it simply makes the full deterministic safety story reproducible in one pass.</p><div id="judge-mode-summary" class="judge-mode-summary" data-state="idle" aria-live="polite"><strong>Ready for Judge Mode</strong><p>Run all eight deterministic scenarios in sequence and compare actual versus expected verdicts.</p></div></div>
     <div class="judge-mode-actions"><button id="run-judge-mode" class="button-primary" type="button">Run Judge Mode</button><a class="button-secondary" href="/proof/">View real Agent OS proof</a></div>
@@ -32,5 +58,5 @@
       <div class="simulation-history-wrap"><div class="mini-heading"><span>RUN HISTORY</span><button id="clear-simulation-history" class="text-button" type="button">Clear</button></div><div id="simulation-history" class="simulation-history"><small>No scenarios run yet.</small></div></div>
     </aside>
   </section>
-  <section class="panel simulation-note"><p class="eyebrow">WHY THIS MATTERS</p><h2>Safety failures are easier to trust when you can reproduce them.</h2><p>Every scenario is deterministic and auditable. A successful run does not mean “the AI chose wisely”; it means CIRCUIT’s typed policy and runtime controls produced the expected containment decision.</p><a class="button-secondary" href="/mission-control/">Inspect Mission Control →</a></section>
+  <section class="panel simulation-note"><p class="eyebrow">WHY THIS MATTERS</p><h2>Safety failures are easier to trust when you can reproduce them.</h2><p>The live panel proves CIRCUIT can reason over changing market evidence without trading. Judge Mode proves canonical containment outcomes remain deterministic and auditable.</p><a class="button-secondary" href="/mission-control/">Inspect Mission Control →</a></section>
 </main><footer class="site-footer"><a class="footer-brand" href="/"><img src="/assets/circuit-mark.svg" alt=""><span>CIRCUIT</span></a><p>Continuous Intent & Runtime Control for User-authorized Intelligent Transactions</p><small>Simulation-first demo • deterministic policy veto • no guaranteed trading performance</small></footer><script type="module" src="/simulation.js"></script><script type="module" src="/shared.js"></script></body></html>

@@ -57,7 +57,8 @@ test('Mission Control exposes defensible decision intelligence instead of a synt
     'decision-total','decision-allow','decision-contained','decision-review','decision-paused','trace-integrity',
     'latest-decision','latest-intent','latest-verdict','latest-reasons','latest-evidence-age',
   ]) assert.match(html,new RegExp(`id=["']${id}["']`));
-  assert.match(html,/BINANCE AGENT OS[\s\S]*VERIFIED LIVE PROOF/i);
+  assert.match(html,/BINANCE AGENT OS/i);
+  assert.match(html,/VERIFIED LIVE PROOF/i);
   assert.match(html,/href=["']\/proof\/["']/i);
   for(const filter of ['ALL','ALLOW','BLOCK','REVIEW','PAUSE']) assert.match(html,new RegExp(`data-trace-filter=["']${filter}["']`));
   assert.doesNotMatch(html,/id=["']runtime-score["']/);

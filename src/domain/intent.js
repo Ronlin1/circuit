@@ -16,6 +16,11 @@ export function createActionIntent(input = {}) {
   if (!PRODUCTS.includes(product)) throw new TypeError('product is unsupported');
   const requestedUsd = Number(input.requestedUsd);
   if (!Number.isFinite(requestedUsd) || requestedUsd <= 0) throw new TypeError('requestedUsd must be positive');
+  let quantity;
+  if (input.quantity != null) {
+    quantity = Number(input.quantity);
+    if (!Number.isFinite(quantity) || quantity <= 0) throw new TypeError('quantity must be positive');
+  }
   return Object.freeze({
     id: input.id ?? randomUUID(),
     agentId: String(input.agentId).trim(),
@@ -27,7 +32,7 @@ export function createActionIntent(input = {}) {
     asset: upper(input.asset, 'asset'),
     quoteAsset: upper(input.quoteAsset, 'quoteAsset'),
     requestedUsd,
-    ...(input.quantity == null ? {} : { quantity: Number(input.quantity) }),
+    ...(quantity == null ? {} : { quantity }),
     rationale: String(input.rationale ?? ''),
     createdAt: input.createdAt ?? new Date().toISOString()
   });

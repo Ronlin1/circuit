@@ -10,7 +10,7 @@ function allowedSymbol(value){
 async function readTicker(base,symbol){
   const url=new URL(base);
   url.searchParams.set('symbol',symbol);
-  const response=await fetch(url,{method:'GET',headers:{accept:'application/json'}});
+  const response=await fetch(url,{method:'GET',headers:{accept:'application/json'},cache:'no-store',signal:AbortSignal.timeout(2500)});
   if(!response.ok) throw new Error('BINANCE_MARKET_HTTP_ERROR');
   return response.json();
 }

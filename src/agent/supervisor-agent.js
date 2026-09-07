@@ -21,7 +21,7 @@ export class CircuitSupervisorAgent {
 
     const proposal=await this.planner.plan({goal:normalizedGoal,mandate,agentId:this.agentId});
     const intent=createActionIntent({...proposal,agentId:this.agentId});
-    const trace=await this.services.gateway.evaluate(intent,{mandate,now:this.services.now});
+    const trace=await this.services.gateway.evaluate(intent,{mandate,now:this.services.currentTime()});
 
     if(!EXECUTABLE_DECISIONS.has(trace.decision)){
       return Object.freeze({status:'CONTAINED',proposal:intent,trace,approved:false});

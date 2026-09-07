@@ -87,7 +87,7 @@ async function callTool(name,args,services) {
   if(name==='circuit_evaluate_intent') {
     const intent=createActionIntent(args?.intent??{});
     const mandate=services.getCurrentMandate();
-    const trace=await services.gateway.evaluate(intent,{mandate,now:services.now,scenarioContext:args?.scenarioContext??{}});
+    const trace=await services.gateway.evaluate(intent,{mandate,now:services.currentTime(),scenarioContext:args?.scenarioContext??{}});
     services.events.publish('trace',trace);
     services.events.publish('runtime',{agentId:intent.agentId,state:services.gateway.runtimeState(intent.agentId)});
     return toolResult(trace);

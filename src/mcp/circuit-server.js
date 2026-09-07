@@ -3,7 +3,8 @@ import { buildSupervisorBriefing } from '../supervisor/briefing.js';
 import { verifyTraceChain } from '../trace/flight-recorder.js';
 
 const MODERN_VERSION='2026-07-28';
-const LEGACY_VERSION='2025-11-25';
+const HANDSHAKE_VERSIONS=Object.freeze(['2024-11-05','2025-03-26','2025-06-18','2025-11-25']);
+const SUPPORTED_VERSIONS=Object.freeze([...HANDSHAKE_VERSIONS,MODERN_VERSION]);
 const SERVER_INFO=Object.freeze({name:'circuit-runtime-control',version:'0.1.0'});
 const SERVER_META=Object.freeze({'io.modelcontextprotocol/serverInfo':SERVER_INFO});
 
@@ -119,9 +120,11 @@ export async function handleCircuitMcp(req,res,services) {
   }
 
   if(method==='initialize') {
-    const requested=rpc.params?.protocolVersion;
-    if(requested!==LEGACY_VERSION) return sendRpcError(res,id,-32022,'UnsupportedProtocolVersion',{supported:[MODERN_VERSION,LEGACY_VERSION]},200,null);
-    return sendRpc(res,id,{protocolVersion:LEGACY_VERSION,capabilities:{tools:{listChanged:false}},serverInfo:SERVER_INFO},200,null);
+    const requested=String(rpc.params?.protocolVersion??'').trim();
+    if(!HANDSHAKE_VERSIONS.includes(requested)) {
+      return sendRpcError(res,id,-32022,'UnsupportedProtocolVersion',{supported:SUPPORTED_VERSIONS},200,null);
+    }
+    return sendRpc(res,id,{protocolVersion:requested,capabilities:{tools:{listChanged:false}},serverInfo:SERVER_INFO},200,null);
   }
   if(method==='notifications/initialized') {
     res.writeHead(202,{'cache-control':'no-store'});
@@ -130,12 +133,12 @@ export async function handleCircuitMcp(req,res,services) {
 
   const version=String(headerVersion || (rpc.params?._meta?.['io.modelcontextprotocol/protocolVersion'] ?? ''));
   const modern=version===MODERN_VERSION;
-  const legacy=!version;
-  if(!modern&&!legacy) return sendRpcError(res,id,-32022,'UnsupportedProtocolVersion',{supported:[MODERN_VERSION,LEGACY_VERSION]});
+  const handshake=!version || HANDSHAKE_VERSIONS.includes(version);
+  if(!modern&&!handshake) return sendRpcError(res,id,-32022,'UnsupportedProtocolVersion',{supported:SUPPORTED_VERSIONS});
   const responseProtocol=modern?MODERN_VERSION:null;
 
   if(method==='server/discover') {
-    if(!modern) return sendRpcError(res,id,-32022,'UnsupportedProtocolVersion',{supported:[MODERN_VERSION,LEGACY_VERSION]},200,responseProtocol);
+    if(!modern) return sendRpcError(res,id,-32022,'UnsupportedProtocolVersion',{supported:SUPPORTED_VERSIONS},200,responseProtocol);
     return sendRpc(res,id,modernResultMeta({capabilities:{tools:{listChanged:false}}}),200,responseProtocol);
   }
   if(method==='tools/list') return sendRpc(res,id,modern?modernResultMeta({tools:TOOLS}):{tools:TOOLS},200,responseProtocol);

@@ -18,9 +18,9 @@
 
 <p align="center">
   <a href="https://circuit-agent-os.netlify.app"><strong>🌐 Live Demo</strong></a> ·
-  <a href="https://circuit-agent-os.netlify.app/mission-control/"><strong>🛰 Mission Control</strong></a> ·
-  <a href="https://circuit-agent-os.netlify.app/simulation/"><strong>🧪 Simulation Lab</strong></a> ·
-  <a href="https://circuit-agent-os.netlify.app/live-agents/"><strong>🤖 Live Agents Guide</strong></a>
+  <a href="https://circuit-agent-os.netlify.app/proof/"><strong>🟡 Agent OS Proof</strong></a> ·
+  <a href="https://circuit-agent-os.netlify.app/simulation/#judge-mode"><strong>🏁 Judge Mode</strong></a> ·
+  <a href="https://circuit-agent-os.netlify.app/mission-control/"><strong>🛰 Mission Control</strong></a>
 </p>
 
 CIRCUIT continuously verifies that an autonomous financial agent is still acting inside the user’s activated **Financial Mandate**, behavioral envelope, evidence-freshness requirements, and market assumptions **before execution is allowed**.
@@ -29,15 +29,71 @@ Built for the **Binance Agent OS Mini Hackathon — Track A**, CIRCUIT is not an
 
 ---
 
+## ⏱️ 60-second judge path
+
+If you are judging CIRCUIT, use this path:
+
+1. **Open the product:** https://circuit-agent-os.netlify.app
+2. **See the real Agent OS proof:** https://circuit-agent-os.netlify.app/proof/
+3. **Run Judge Mode:** https://circuit-agent-os.netlify.app/simulation/#judge-mode
+4. **Inspect the control plane:** https://circuit-agent-os.netlify.app/mission-control/
+5. **Read the architecture:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+
+The core claim can be checked in under a minute:
+
+```text
+REAL BINANCE AGENT OS MARKET EVIDENCE
+                ↓
+           CIRCUIT
+                ↓
+$100 BNB → BLOCK
+$8 BNB   → ALLOW
+                ↓
+0 Binance writes
+```
+
+Then Judge Mode runs the eight deterministic adversarial scenarios and compares expected versus actual containment verdicts.
+
+---
+
+## ✅ Verified Binance Agent OS proof
+
+CIRCUIT was tested end-to-end in a real Codex session connected to Binance’s official Agent OS MCP endpoint and the hosted CIRCUIT MCP server.
+
+For the final live-evidence proof, fresh BNB/USDT ticker and depth data were fetched separately for two hypothetical Spot BUY intents and passed into CIRCUIT’s deterministic evidence path through `scenarioContext`.
+
+| Intent | Binance price | CIRCUIT evidence price | Evidence age | CIRCUIT verdict | Reason codes | Binance writes |
+|---|---:|---:|---:|:---:|---|---:|
+| `$100 BNB` | `745.63 USDT` | `745.63 USDT` | `0.684 s` | `BLOCK` | `ORDER_CAP_EXCEEDED`, `DAILY_BUDGET_EXCEEDED` | `0` |
+| `$8 BNB` | `745.50 USDT` | `745.50 USDT` | `0.645 s` | `ALLOW` | none | `0` |
+
+Canonical Flight Recorder traces:
+
+```text
+$100 BLOCK  5fba99e4-8280-45d2-bdaa-61da16f219a3
+$8 ALLOW    777aeb09-5106-447b-8329-c25a1cfa298c
+```
+
+Both traces recorded the exact submitted Binance market price, ticker timestamp, book timestamp, and calculated spread. `EVIDENCE_STALE` was absent because both evidence snapshots were comfortably inside the active 15-second freshness window.
+
+**Evidence boundary:** the live proof uses real Binance **market evidence**. Daily spend, concentration, drawdown, volatility, balance/portfolio assumptions, and prior-settlement state in this public proof remain CIRCUIT **simulation/default** values and are **not live Binance account data**.
+
+The proof deliberately stopped before financial mutation: **0 Binance writes**, no trade/transfer/Convert/Margin/Futures/cancel tool was called, and the `$8` ALLOW remained behind a later human approval/execution boundary.
+
+➡️ **Judge-facing proof page:** https://circuit-agent-os.netlify.app/proof/
+
+---
+
 ## 🌐 Product experience
 
-The hosted demo is intentionally split into focused surfaces so a judge or operator can understand CIRCUIT without hunting through one giant dashboard:
+The hosted demo is split into focused surfaces so a judge or operator can understand CIRCUIT without hunting through one giant dashboard:
 
 | Page | Purpose |
 |---|---|
-| **Home** | Product thesis, control-loop visual, and proof points |
+| **Home** | Product thesis, control-loop visual, and direct judge CTAs |
+| **Agent OS Proof** | Recorded real Binance Agent OS market evidence, CIRCUIT traces, and zero-write boundary |
 | **Mission Control** | Active mandate, runtime health, MCP supervisor, breaker, and Flight Recorder |
-| **Simulation Lab** | Eight deterministic adversarial scenarios with expected vs actual verdicts |
+| **Simulation Lab / Judge Mode** | Eight deterministic adversarial scenarios with expected vs actual verdicts and one-click judge summary |
 | **How it Works** | Financial Mandate → Policy Engine → Runtime Drift → Execution Gateway → Flight Recorder |
 | **Live Agents** | MCP integration path plus the explicit real-money production hardening boundary |
 | **About** | CIRCUIT origin story, thesis, and design principles |
@@ -115,13 +171,13 @@ A model-generated explanation can never downgrade a stronger deterministic verdi
 
 📐 **Deep architecture:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)  
 🛡️ **Threat model:** [`docs/THREAT_MODEL.md`](docs/THREAT_MODEL.md)  
-🎬 **2m30s demo:** [`docs/DEMO.md`](docs/DEMO.md)
+🎬 **Demo runbook:** [`docs/DEMO.md`](docs/DEMO.md)
 
 ---
 
-## 🧪 Adversarial Lab
+## 🧪 Adversarial Lab + Judge Mode
 
-Run the Mission Control demo and attack the agent yourself:
+Run the Simulation Lab and attack the agent yourself:
 
 | # | Scenario | Expected | Proof |
 |---:|---|:---:|---|
@@ -134,7 +190,11 @@ Run the Mission Control demo and attack the agent yourself:
 | 07 | 🌪️ Regime Drift | `REVIEW` | Deployment assumptions are monitored |
 | 08 | 🧨 Prompt Injection | `BLOCK` | Untrusted text cannot rewrite authorization |
 
+**Judge Mode** runs the whole matrix in one click and reports expected-versus-actual outcomes. The target judge summary is **8 / 8 expected controls**.
+
 Every evaluation creates a hash-linked **Flight Recorder** trace containing intent, evidence, checks, drift findings, verdict, runtime transition, and trace hashes.
+
+➡️ https://circuit-agent-os.netlify.app/simulation/#judge-mode
 
 ---
 
@@ -172,7 +232,14 @@ https://agent.binance.com/mcp/agentic
 
 `BinanceMcpAdapter` supports capability discovery, tool invocation, fail-closed auth handling, and explicit financial-tool mappings. CIRCUIT refuses to guess a trading-capable tool name.
 
-Live execution is deliberately restricted in v1:
+The live proof used read-only Binance tools discovered from the actual MCP surface:
+
+```text
+spot.ticker24hr
+spot.depth
+```
+
+Live execution remains deliberately restricted in v1:
 
 - **simulation by default**;
 - Spot only;
@@ -186,7 +253,7 @@ Live execution is deliberately restricted in v1:
 
 ## 🤖 CIRCUIT Supervisor Agent
 
-Phase 1 adds an explicit agent orchestration layer on top of the control plane. The planner can propose a typed financial intent, but it never receives Binance execution access. CIRCUIT evaluates the proposal first; `BLOCK`, `REVIEW`, and `PAUSE` terminate the run, while `ALLOW` / `RESIZE` still stop at a separate human approval gate before execution.
+The explicit supervisor orchestration layer keeps the planner separate from the execution adapter. The planner can propose a typed financial intent, but it never receives Binance execution access. CIRCUIT evaluates the proposal first; `BLOCK`, `REVIEW`, and `PAUSE` terminate the run, while `ALLOW` / `RESIZE` still stop at a separate human approval gate before execution.
 
 Run the deterministic proof locally:
 
@@ -202,7 +269,7 @@ $8 BNB -> ALLOW -> AWAITING_APPROVAL
 Binance executions: 0
 ```
 
-For the real Binance Agent OS read-only proof, use the supported-host profile in [`agent/CIRCUIT_SUPERVISOR.md`](agent/CIRCUIT_SUPERVISOR.md) and the exact runbook in [`docs/AGENT_OS_LIVE_DEMO.md`](docs/AGENT_OS_LIVE_DEMO.md). The safe capability probe is available as `npm run agent:probe`; it lists advertised MCP capabilities only and never invokes a Binance write tool.
+For the real Binance Agent OS read-only proof, use [`agent/CIRCUIT_SUPERVISOR.md`](agent/CIRCUIT_SUPERVISOR.md), the runbook in [`docs/AGENT_OS_LIVE_DEMO.md`](docs/AGENT_OS_LIVE_DEMO.md), and the recorded judge-facing result at https://circuit-agent-os.netlify.app/proof/.
 
 ---
 
@@ -266,14 +333,16 @@ src/policy/       deterministic veto rules
 src/runtime/      drift detection + state machine
 src/execution/    evaluation / execution isolation
 src/adapters/     simulator + Binance MCP adapter
+src/agent/        Supervisor Agent orchestration + live proof helpers
 src/trace/        hash-linked Flight Recorder
 src/scenarios/    eight reproducible attacks
 src/mcp/          agent-facing MCP supervisor
 src/supervisor/   advisory trace briefings
 src/server/       HTTP / SSE control plane
-public/           black / yellow / white Mission Control
+public/proof/     judge-facing recorded Agent OS proof
+public/simulation Judge Mode + scenario lab
 scripts/          release, smoke, syntax and secret checks
-docs/             architecture, threat model and demo runbook
+docs/             architecture, threat model, demo and submission package
 ```
 
 ---
@@ -298,6 +367,7 @@ Read [`SECURITY.md`](SECURITY.md) before connecting any live financial account.
 
 ## 🧭 Hackathon release material
 
+- 🏁 [`docs/SUBMISSION.md`](docs/SUBMISSION.md) — judge links, verified proof facts, claim boundary, and final submission checklist
 - 📐 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - 🎬 [`docs/DEMO.md`](docs/DEMO.md)
 - 🛡️ [`docs/THREAT_MODEL.md`](docs/THREAT_MODEL.md)

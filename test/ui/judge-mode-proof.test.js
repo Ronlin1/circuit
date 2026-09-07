@@ -60,8 +60,13 @@ test('Proof is first-class in shared navigation and Home links judges directly t
   ];
   for(const path of pagePaths){
     const html=await read(path);
-    assert.match(html,/href=["']\/proof\/["']/);
+    assert.match(html,/class=["'][^"']*site-nav/);
+    assert.match(html,/src=["']\/shared\.js["']/);
   }
+  const shared=await read('../../public/shared.js');
+  assert.match(shared,/ensureProofNavigation/);
+  assert.match(shared,/href=['"]\/proof\//);
+  assert.match(shared,/textContent=['"]Proof['"]/);
   const home=await read('../../public/index.html');
   assert.match(home,/View Agent OS Proof/i);
 });

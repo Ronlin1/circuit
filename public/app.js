@@ -1,6 +1,6 @@
 const $=(selector,root=document)=>root.querySelector(selector);
 const $$=(selector,root=document)=>[...root.querySelectorAll(selector)];
-const state={mandate:null,traces:[],activePausedAgent:null};
+const state={mandate:null,traces:[],activePausedAgent:null,activeTraceFilter:'ALL',traceChainVerified:null};
 
 async function api(path,options={}){
   const response=await fetch(path,{headers:{'content-type':'application/json'},...options});
@@ -14,12 +14,55 @@ function toast(title,message){const node=document.createElement('div');node.clas
 
 function renderMandate(m){state.mandate=m;$('#mandate-name').textContent=m.name;$('#limit-order').textContent=money(m.maxOrderUsd);$('#limit-daily').textContent=money(m.maxDailySpendUsd);$('#limit-concentration').textContent=`${m.maxAssetConcentrationPct}%`;$('#limit-drawdown').textContent=`${m.maxDailyDrawdownPct}%`;$('#allowed-assets').innerHTML=[...m.allowedProducts,...m.allowedAssets].map(x=>`<span class="token">${escapeHtml(x)}</span>`).join('')}
 function decisionSummary(trace){const primary=trace.reasonCodes?.[0]||'ALL_CHECKS_PASSED';return `${trace.decision} · ${primary.replaceAll('_',' ')}`}
-function updateRuntime(trace){const runtime=trace.runtimeAfter||'HEALTHY';$('#runtime-state').textContent=runtime;$('#behavior-state').textContent=runtime==='HEALTHY'?'NORMAL':runtime;$('#runtime-score').textContent=runtime==='HEALTHY'?'100':runtime==='DEGRADED'?'62':runtime==='PAUSED'?'28':'82';const regime=trace.reasonCodes?.includes('ABNORMAL_MARKET_REGIME')?'ABNORMAL':'NORMAL';$('#market-regime').textContent=regime;$('#evidence-freshness').textContent=trace.reasonCodes?.includes('EVIDENCE_STALE')?'STALE':'LIVE';$('#intent-alignment').textContent=trace.reasonCodes?.includes('READ_ONLY_MUTATION')?'0%':'100%';if(runtime==='PAUSED'||runtime==='EMERGENCY'){state.activePausedAgent=trace.agentId;$('#active-agent-label').textContent=trace.agentId;$('#recover-agent').disabled=false}else if(state.activePausedAgent===trace.agentId){state.activePausedAgent=null;$('#active-agent-label').textContent='No paused agent';$('#recover-agent').disabled=true}}
-function renderTraces(){const root=$('#activity-timeline');if(!state.traces.length){root.innerHTML='<div class="empty-state"><span>◇</span><strong>No decisions recorded</strong><small>Launch a scenario to generate the first trace.</small></div>';return}root.innerHTML=[...state.traces].reverse().map(trace=>`<div class="trace-row" data-trace="${escapeHtml(trace.traceId)}" data-decision="${trace.decision}" tabindex="0" role="button"><div class="trace-top"><strong>${escapeHtml(trace.intent?.symbol||trace.agentId)}</strong><span class="decision">${trace.decision}</span></div><p>${escapeHtml(decisionSummary(trace))}</p><span class="trace-time">${new Date(trace.timestamp).toLocaleTimeString()}</span></div>`).join('');$$('.trace-row',root).forEach(row=>{const open=()=>openTrace(row.dataset.trace);row.addEventListener('click',open);row.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}})})}
-function addTrace(trace){if(!trace||state.traces.some(t=>t.traceId===trace.traceId))return;state.traces.push(trace);renderTraces();updateRuntime(trace)}
+function evidenceAge(trace){const decisionMs=Date.parse(trace?.timestamp??'');const observedMs=Date.parse(trace?.evidence?.observedAt??'');if(!Number.isFinite(decisionMs)||!Number.isFinite(observedMs))return '—';const delta=decisionMs-observedMs;if(delta<0)return 'FUTURE';return `${(delta/1000).toFixed(3)} s`}
+
+function renderDecisionIntelligence(){
+  const counts={ALLOW:0,RESIZE:0,BLOCK:0,REVIEW:0,PAUSE:0};
+  state.traces.forEach(trace=>{if(Object.hasOwn(counts,trace.decision))counts[trace.decision]+=1});
+  $('#decision-total').textContent=String(state.traces.length);
+  $('#decision-allow').textContent=String(counts.ALLOW+counts.RESIZE);
+  $('#decision-contained').textContent=String(counts.BLOCK+counts.PAUSE);
+  $('#decision-review').textContent=String(counts.REVIEW);
+  $('#decision-paused').textContent=String(counts.PAUSE);
+  $('#trace-integrity').textContent=state.traceChainVerified===true?'VERIFIED':state.traceChainVerified===false?'ISSUE':'CHECKING';
+}
+
+function renderLatestDecision(){
+  const trace=state.traces.at(-1);
+  if(!trace){$('#latest-intent').textContent='No decision recorded';$('#latest-verdict').textContent='—';$('#latest-reasons').innerHTML='<code>WAITING_FOR_TRACE</code>';$('#latest-evidence-age').textContent='—';return}
+  const intent=trace.intent??{};
+  const amount=Number.isFinite(Number(intent.requestedUsd))?money(Number(intent.requestedUsd)):'—';
+  $('#latest-intent').textContent=`${intent.action??'INTENT'} ${amount} ${intent.asset??intent.symbol??''}`.trim();
+  $('#latest-verdict').textContent=trace.decision;
+  const reasons=trace.reasonCodes?.length?trace.reasonCodes:['ALL_CHECKS_PASSED'];
+  $('#latest-reasons').innerHTML=reasons.map(code=>`<code>${escapeHtml(code)}</code>`).join('');
+  $('#latest-evidence-age').textContent=evidenceAge(trace);
+}
+
+function updateRuntime(trace){
+  const runtime=trace.runtimeAfter||'HEALTHY';
+  $('#runtime-state').textContent=runtime;
+  $('#behavior-state').textContent=runtime==='HEALTHY'?'NORMAL':runtime;
+  $('#market-regime').textContent=trace.reasonCodes?.includes('ABNORMAL_MARKET_REGIME')?'ABNORMAL':'NORMAL';
+  $('#evidence-freshness').textContent=trace.reasonCodes?.includes('EVIDENCE_STALE')?'STALE':trace.evidence?'FRESH':'NO TRACE';
+  if(runtime==='PAUSED'||runtime==='EMERGENCY'){state.activePausedAgent=trace.agentId;$('#active-agent-label').textContent=trace.agentId;$('#recover-agent').disabled=false}else if(state.activePausedAgent===trace.agentId){state.activePausedAgent=null;$('#active-agent-label').textContent='No paused agent';$('#recover-agent').disabled=true}
+}
+
+function traceMatchesFilter(trace){if(state.activeTraceFilter==='ALL')return true;if(state.activeTraceFilter==='ALLOW')return trace.decision==='ALLOW'||trace.decision==='RESIZE';return trace.decision===state.activeTraceFilter}
+function renderTraceFilters(){$$('[data-trace-filter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.traceFilter===state.activeTraceFilter)))}
+function renderTraces(){const root=$('#activity-timeline');const visible=state.traces.filter(traceMatchesFilter);renderTraceFilters();if(!visible.length){root.innerHTML=`<div class="empty-state"><span>◇</span><strong>${state.traces.length?'No matching decisions':'No decisions recorded'}</strong><small>${state.traces.length?'Choose another verdict filter.':'Launch a scenario to generate the first trace.'}</small></div>`;return}root.innerHTML=[...visible].reverse().map(trace=>`<div class="trace-row" data-trace="${escapeHtml(trace.traceId)}" data-decision="${trace.decision}" tabindex="0" role="button"><div class="trace-top"><strong>${escapeHtml(trace.intent?.symbol||trace.agentId)}</strong><span class="decision">${trace.decision}</span></div><p>${escapeHtml(decisionSummary(trace))}</p><span class="trace-time">${new Date(trace.timestamp).toLocaleTimeString()}</span></div>`).join('');$$('.trace-row',root).forEach(row=>{const open=()=>openTrace(row.dataset.trace);row.addEventListener('click',open);row.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}})})}
+function addTrace(trace){if(!trace||state.traces.some(t=>t.traceId===trace.traceId))return;state.traces.push(trace);renderTraces();renderDecisionIntelligence();renderLatestDecision();updateRuntime(trace)}
 function openTrace(id){const trace=state.traces.find(t=>t.traceId===id);if(!trace)return;$('#trace-title').textContent=`${trace.decision} · ${trace.intent?.symbol||trace.agentId}`;const sections=[['INTENT',trace.intent],['POLICY CHECKS',trace.policyChecks],['RUNTIME DRIFT',trace.driftFindings],['EVIDENCE',trace.evidence],['DECISION',{decision:trace.decision,reasonCodes:trace.reasonCodes,runtimeBefore:trace.runtimeBefore,runtimeAfter:trace.runtimeAfter}],['TAMPER-EVIDENCE',{previousHash:trace.previousHash,currentHash:trace.currentHash}]];$('#trace-content').innerHTML=sections.map(([title,data])=>`<section class="trace-section"><h3>${title}</h3><pre>${escapeHtml(JSON.stringify(data,null,2))}</pre></section>`).join('');$('#trace-inspector').showModal()}
 
 async function runScenario(button){const id=button.dataset.scenario;$$('.scenario').forEach(b=>b.classList.add('scenario-running'));try{const result=await api(`/api/scenarios/${id}/run`,{method:'POST',body:'{}'});addTrace(result.trace);toast(result.trace.decision,decisionSummary(result.trace))}catch(error){toast('ERROR',error.message)}finally{$$('.scenario').forEach(b=>b.classList.remove('scenario-running'))}}
 async function recover(){if(!state.activePausedAgent)return;try{const data=await api(`/api/runtime/${encodeURIComponent(state.activePausedAgent)}/recover`,{method:'POST',body:'{}'});$('#runtime-state').textContent=data.state;$('#behavior-state').textContent=data.state==='HEALTHY'?'NORMAL':data.state;toast('RECOVERY',`${data.agentId} → ${data.state}`);if(data.state==='HEALTHY'){state.activePausedAgent=null;$('#active-agent-label').textContent='No paused agent';$('#recover-agent').disabled=true}}catch(error){toast('RECOVERY FAILED',error.message)}}
-async function boot(){let health=null;const bootState=$('#dashboard-boot-state');try{const [resolvedHealth,mandate,traces]=await Promise.all([api('/api/health'),api('/api/mandates/current'),api('/api/traces')]);health=resolvedHealth;$('#environment-badge').textContent=health.mode;renderMandate(mandate);state.traces=traces;renderTraces();if(traces.length)updateRuntime(traces.at(-1));if(bootState){bootState.textContent='READY';bootState.dataset.state='ready'}}catch(error){if(bootState){bootState.textContent='ERROR';bootState.dataset.state='error'}toast('BOOT ERROR',error.message)}$$('.scenario').forEach(button=>button.addEventListener('click',()=>runScenario(button)));$('#recover-agent').addEventListener('click',recover);$('[data-close-dialog]').addEventListener('click',()=>$('#trace-inspector').close());$('#verify-chain').addEventListener('click',async()=>{try{const health=await api('/api/health');toast('TRACE CHAIN',health.traceChain?'Verified: chain intact':'Verification failed')}catch(error){toast('VERIFY ERROR',error.message)}});if(health?.realtime!==false&&typeof EventSource!=='undefined'){const events=new EventSource('/api/events');events.addEventListener('trace',event=>{try{addTrace(JSON.parse(event.data))}catch{}});events.addEventListener('runtime',event=>{try{const data=JSON.parse(event.data);$('#runtime-state').textContent=data.state}catch{}});events.onerror=()=>$('.live-dot')?.classList.add('offline')}else{$('.live-dot')?.classList.add('offline')}}
+
+async function boot(){let health=null;const bootState=$('#dashboard-boot-state');try{const [resolvedHealth,mandate,traces]=await Promise.all([api('/api/health'),api('/api/mandates/current'),api('/api/traces')]);health=resolvedHealth;$('#environment-badge').textContent=health.mode;state.traceChainVerified=Boolean(health.traceChain);renderMandate(mandate);state.traces=traces;renderTraces();renderDecisionIntelligence();renderLatestDecision();if(traces.length)updateRuntime(traces.at(-1));if(bootState){bootState.textContent='READY';bootState.dataset.state='ready'}}catch(error){if(bootState){bootState.textContent='ERROR';bootState.dataset.state='error'}toast('BOOT ERROR',error.message)}
+  $$('.scenario').forEach(button=>button.addEventListener('click',()=>runScenario(button)));
+  $$('[data-trace-filter]').forEach(button=>button.addEventListener('click',()=>{state.activeTraceFilter=button.dataset.traceFilter;renderTraces()}));
+  $('#recover-agent').addEventListener('click',recover);
+  $('[data-close-dialog]').addEventListener('click',()=>$('#trace-inspector').close());
+  $('#verify-chain').addEventListener('click',async()=>{try{const current=await api('/api/health');state.traceChainVerified=Boolean(current.traceChain);renderDecisionIntelligence();toast('TRACE CHAIN',state.traceChainVerified?'Verified: chain intact':'Verification failed')}catch(error){state.traceChainVerified=false;renderDecisionIntelligence();toast('VERIFY ERROR',error.message)}});
+  if(health?.realtime!==false&&typeof EventSource!=='undefined'){const events=new EventSource('/api/events');events.addEventListener('trace',event=>{try{addTrace(JSON.parse(event.data))}catch{}});events.addEventListener('runtime',event=>{try{const data=JSON.parse(event.data);$('#runtime-state').textContent=data.state}catch{}});events.onerror=()=>$('.live-dot')?.classList.add('offline')}else{$('.live-dot')?.classList.add('offline')}
+}
 boot();

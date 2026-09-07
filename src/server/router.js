@@ -28,7 +28,7 @@ export async function routeRequest(req,res,services){
     const mandate=services.getMandate(match[1]);
     if(!mandate) return sendJson(res,404,{ok:false,error:{code:'MANDATE_NOT_FOUND'}});
     try{
-      const active=services.activate(match[1],services.now);
+      const active=services.activate(match[1],services.currentTime());
       services.events.publish('mandate',active);
       return sendJson(res,200,{ok:true,data:active});
     }catch(error){
@@ -39,7 +39,7 @@ export async function routeRequest(req,res,services){
   match=path.match(/^\/api\/mandates\/([^/]+)$/);
   if(req.method==='GET'&&match){const mandate=services.getMandate(match[1]);return mandate?sendJson(res,200,{ok:true,data:mandate}):sendJson(res,404,{ok:false,error:{code:'MANDATE_NOT_FOUND'}});}
   if(req.method==='POST'&&path==='/api/intents/evaluate'){
-    const body=await readJson(req); const intent=createActionIntent(body.intent??body); const mandate=services.getMandate(body.mandateId)??services.getCurrentMandate(); const trace=await services.gateway.evaluate(intent,{mandate,now:services.now,scenarioContext:body.scenarioContext??{}});services.events.publish('trace',trace);services.events.publish('runtime',{agentId:intent.agentId,state:services.gateway.runtimeState(intent.agentId)});return sendJson(res,200,{ok:true,data:trace});
+    const body=await readJson(req); const intent=createActionIntent(body.intent??body); const mandate=services.getMandate(body.mandateId)??services.getCurrentMandate(); const trace=await services.gateway.evaluate(intent,{mandate,now:services.currentTime(),scenarioContext:body.scenarioContext??{}});services.events.publish('trace',trace);services.events.publish('runtime',{agentId:intent.agentId,state:services.gateway.runtimeState(intent.agentId)});return sendJson(res,200,{ok:true,data:trace});
   }
   match=path.match(/^\/api\/intents\/([^/]+)\/execute$/);
   if(req.method==='POST'&&match){await readJson(req);try{const result=await services.gateway.executeEvaluated(match[1]);services.events.publish('execution',result);return sendJson(res,200,{ok:true,data:result});}catch(error){return sendJson(res,409,{ok:false,error:{code:'TRACE_NOT_EXECUTABLE',message:error.message}});}}
@@ -51,6 +51,6 @@ export async function routeRequest(req,res,services){
   match=path.match(/^\/api\/runtime\/([^/]+)$/);
   if(req.method==='GET'&&match) return sendJson(res,200,{ok:true,data:{agentId:match[1],state:services.gateway.runtimeState(match[1])}});
   match=path.match(/^\/api\/scenarios\/([^/]+)\/run$/);
-  if(req.method==='POST'&&match){await readJson(req);if(!SCENARIOS[match[1]]) return sendJson(res,404,{ok:false,error:{code:'SCENARIO_NOT_FOUND'}});const data=await runScenario(match[1],{gateway:services.gateway,mandate:services.getCurrentMandate(),adapter:services.adapter,now:services.now});services.events.publish('scenario',{id:match[1],decision:data.trace.decision});services.events.publish('trace',data.trace);services.events.publish('runtime',{agentId:data.trace.agentId,state:services.gateway.runtimeState(data.trace.agentId)});return sendJson(res,200,{ok:true,data});}
+  if(req.method==='POST'&&match){await readJson(req);if(!SCENARIOS[match[1]]) return sendJson(res,404,{ok:false,error:{code:'SCENARIO_NOT_FOUND'}});const data=await runScenario(match[1],{gateway:services.gateway,mandate:services.getCurrentMandate(),adapter:services.adapter,now:services.currentTime()});services.events.publish('scenario',{id:match[1],decision:data.trace.decision});services.events.publish('trace',data.trace);services.events.publish('runtime',{agentId:data.trace.agentId,state:services.gateway.runtimeState(data.trace.agentId)});return sendJson(res,200,{ok:true,data});}
   return sendJson(res,404,{ok:false,error:{code:'NOT_FOUND'}});
 }

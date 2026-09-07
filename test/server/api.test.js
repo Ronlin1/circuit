@@ -62,15 +62,17 @@ test('scenario run writes traces and exposes runtime state', async()=>withServer
   assert.equal(run.body.data.trace.decision,'BLOCK');
   const traces=await json(`${base}/api/traces`);
   assert.ok(traces.body.data.length>=1);
-  const runtime=await json(`${base}/api/runtime/demo-oversize-order`);
+  const agentId=encodeURIComponent(run.body.data.trace.agentId);
+  const runtime=await json(`${base}/api/runtime/${agentId}`);
   assert.equal(runtime.body.data.state,'HEALTHY');
 }));
 
 test('paused runtime requires explicit recovery endpoint', async()=>withServer(async(base)=>{
   const run=await json(`${base}/api/scenarios/duplicate-retry-loop/run`,{method:'POST',body:'{}'});
   assert.equal(run.body.data.trace.decision,'PAUSE');
-  const before=await json(`${base}/api/runtime/demo-duplicate-retry-loop`);
+  const agentId=encodeURIComponent(run.body.data.trace.agentId);
+  const before=await json(`${base}/api/runtime/${agentId}`);
   assert.equal(before.body.data.state,'PAUSED');
-  const recovered=await json(`${base}/api/runtime/demo-duplicate-retry-loop/recover`,{method:'POST',body:'{}'});
+  const recovered=await json(`${base}/api/runtime/${agentId}/recover`,{method:'POST',body:'{}'});
   assert.equal(recovered.body.data.state,'HEALTHY');
 }));

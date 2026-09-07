@@ -1,25 +1,105 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#070707"><meta name="description" content="How CIRCUIT controls agentic financial actions before execution."><title>How CIRCUIT Works</title><link rel="icon" href="/assets/circuit-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/product.css"></head><body><a class="skip-link" href="#main">Skip to main content</a><div class="ambient ambient-a" aria-hidden="true"></div><div class="ambient ambient-b" aria-hidden="true"></div><header class="site-header">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#070707"><meta name="description" content="Practical guide for judging, integrating, and operating CIRCUIT with agentic financial workflows."><title>Guide — CIRCUIT</title><link rel="icon" href="/assets/circuit-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/product.css"><link rel="stylesheet" href="/hardening.css"></head><body><a class="skip-link" href="#main">Skip to main content</a><div class="ambient ambient-a" aria-hidden="true"></div><div class="ambient ambient-b" aria-hidden="true"></div><header class="site-header">
   <a class="site-brand" href="/" aria-label="CIRCUIT home"><img src="/assets/circuit-mark.svg" alt=""><span><strong>CIRCUIT</strong><small>Runtime Control Plane for Agentic Finance</small></span></a>
   <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation"><span></span><span></span></button><nav class="site-nav" aria-label="Primary navigation">
-    <a href="/">Home</a><a href="/mission-control/">Mission Control</a><a href="/simulation/">Simulation</a><a href="/how-it-works/">How it Works</a><a href="/live-agents/">Live Agents</a><a href="/about/">About</a>
+    <a href="/">Home</a><a href="/mission-control/">Mission Control</a><a href="/simulation/">Simulation</a><a href="/proof/">Proof</a><a href="/how-it-works/">How it Works</a><a href="/live-agents/">Live Agents</a><a href="/about/">About</a>
   </nav>
   <div class="nav-status"><span class="live-indicator" data-live-indicator><i></i><b>LIVE DEMO</b></span></div>
 </header><main id="main" class="site-main content-page">
-  <section class="page-hero"><p class="eyebrow">HOW IT WORKS</p><h1>AI can reason.<br><span>Deterministic code owns the veto.</span></h1><p>AI can interpret intent and explain outcomes. CIRCUIT keeps the final financial decision inside deterministic, typed controls.</p></section>
-  <section class="control-path" aria-label="CIRCUIT control path">
-    <article class="panel path-card"><span>01</span><p class="eyebrow">FINANCIAL MANDATE</p><h2>Define the operating envelope.</h2><p>The user activates versioned constraints for products, assets, order size, daily spend, concentration, drawdown, evidence freshness, and behavior limits.</p></article>
-    <div class="path-arrow" aria-hidden="true">→</div>
-    <article class="panel path-card"><span>02</span><p class="eyebrow">POLICY ENGINE</p><h2>Check hard rules first.</h2><p>Typed policy checks validate authorization, product and asset scope, caps, budgets, concentration, drawdown, evidence freshness, and uncertain settlement.</p></article>
-    <div class="path-arrow" aria-hidden="true">→</div>
-    <article class="panel path-card"><span>03</span><p class="eyebrow">RUNTIME DRIFT</p><h2>Evaluate behavior over time.</h2><p>Sequence-aware supervision detects semantic retries, order-frequency anomalies, sticky pause states, and market-regime changes that a per-request check can miss.</p></article>
-    <div class="path-arrow" aria-hidden="true">→</div>
-    <article class="panel path-card"><span>04</span><p class="eyebrow">EXECUTION GATEWAY</p><h2>Separate verdict from execution.</h2><p>Only explicitly allowed or resized actions can cross the execution boundary. BLOCK, REVIEW, and PAUSE verdicts do not execute.</p></article>
+  <section class="page-hero"><p class="eyebrow">CIRCUIT GUIDE</p><h1>AI can reason.<br><span>Deterministic code owns the veto.</span></h1><p>Use this guide to judge CIRCUIT in one minute, connect an agent safely, or operate the control plane from mandate activation through trace review and recovery.</p></section>
+
+  <section class="panel guide-section" aria-labelledby="judge-path-title"><div class="panel-heading"><div><p class="eyebrow">FOR JUDGES</p><h2 id="judge-path-title">60-second judge path</h2></div><span class="status-chip">4 STEPS</span></div>
+    <div class="judge-path">
+      <article class="judge-step"><span>01</span><strong>Start with the proof</strong><p>See real Binance Agent OS market evidence enter CIRCUIT and compare the exact evidence recorded in the trace.</p><a href="/proof/">Open Proof →</a></article>
+      <article class="judge-step"><span>02</span><strong>Attack the control plane</strong><p>Run all eight deterministic threats and compare expected versus actual verdicts.</p><a href="/simulation/#judge-mode">Run Judge Mode →</a></article>
+      <article class="judge-step"><span>03</span><strong>Inspect live decisions</strong><p>Use Mission Control to inspect the mandate, runtime state, latest verdict, reasons, and Flight Recorder.</p><a href="/mission-control/">Open Mission Control →</a></article>
+      <article class="judge-step"><span>04</span><strong>Check the code</strong><p>Review the public implementation, threat model, tests, and reproducible verification gate.</p><a href="https://github.com/Ronlin1/circuit">Open GitHub →</a></article>
+    </div>
   </section>
-  <section class="grid explainer-grid">
-    <article class="panel content-card"><p class="eyebrow">FLIGHT RECORDER</p><h2>Every verdict is inspectable.</h2><p>Mandate, intent, evidence, policy checks, runtime findings, verdict, and runtime state are linked into a SHA-256 trace chain for tamper-evident replay.</p></article>
-    <article class="panel content-card"><p class="eyebrow">FAIL CLOSED</p><h2>Uncertainty is a control signal.</h2><p>CIRCUIT is designed to fail closed when evidence is stale, prior settlement is uncertain, or runtime state is already PAUSED or EMERGENCY.</p></article>
-    <article class="panel content-card"><p class="eyebrow">MCP SUPERVISOR</p><h2>Agents can ask; policy still decides.</h2><p>The MCP surface lets compatible AI hosts inspect state, submit typed intents for evaluation, and request trace briefings without exposing an execution tool.</p></article>
+
+  <section class="persona-grid" aria-label="Ways to use this guide">
+    <article class="persona-card panel"><span>JUDGE</span><strong>Verify the claim.</strong><p>Proof → Judge Mode → Mission Control. You should see unsafe intents contained before execution and a complete trace explaining why.</p></article>
+    <article class="persona-card panel"><span>AGENT BUILDER</span><strong>Put CIRCUIT in the loop.</strong><p>Connect an MCP-capable host, give CIRCUIT typed intents and evidence, and treat its verdict as the financial execution boundary.</p></article>
+    <article class="persona-card panel"><span>OPERATOR</span><strong>Control the operating envelope.</strong><p>Activate a Financial Mandate, inspect runtime drift and evidence freshness, then recover paused agents only after the cause is understood.</p></article>
   </section>
-  <section class="panel principle-strip"><div><p class="eyebrow">CORE PRINCIPLE</p><h2>Authorization is not a permanent safety guarantee.</h2></div><p>Static permission says what an agent may access. CIRCUIT keeps asking whether the agent’s evolving behavior still matches the intent and assumptions under which that permission was granted.</p><a class="button-secondary" href="/simulation/">See the principle under attack →</a></section>
+
+  <section class="panel guide-section" aria-labelledby="operator-title"><div class="panel-heading"><div><p class="eyebrow">OPERATOR JOURNEY</p><h2 id="operator-title">From Financial Mandate to recovery.</h2></div></div>
+    <ol class="guide-flow">
+      <li><div><strong>Define the Financial Mandate.</strong><p>Specify allowed products and assets plus order cap, daily spend, concentration, drawdown, order frequency, evidence freshness, duplicate-intent window, and abnormal-market behavior. Natural-language compilation creates a DRAFT only.</p></div></li>
+      <li><div><strong>Activate explicitly.</strong><p>A user activates a versioned mandate out of band. Worker-agent rationale cannot rewrite that ACTIVE operating envelope.</p></div></li>
+      <li><div><strong>Receive a typed ActionIntent.</strong><p>The agent proposes a concrete action such as BUY BNB/USDT for $8. The intent carries agent identity, semantic intent identity, authorization mode, product, asset pair, requested USD, and optional rationale.</p></div></li>
+      <li><div><strong>Attach fresh evidence.</strong><p>Market and account assumptions enter as structured evidence. For the verified Agent OS proof, live Binance market evidence entered through <code>scenarioContext</code> before deterministic evaluation.</p></div></li>
+      <li><div><strong>Run the POLICY ENGINE.</strong><p>CIRCUIT checks mandate status, authorization, product/asset scope, order and daily caps, concentration, drawdown, evidence freshness, and uncertain prior settlement. Invalid or stale inputs fail closed.</p></div></li>
+      <li><div><strong>Evaluate RUNTIME DRIFT.</strong><p>Sequence-aware supervision looks beyond a single request for duplicate semantic retries, unsafe order frequency, sticky pause state, and abnormal market regime.</p></div></li>
+      <li><div><strong>Honor the verdict.</strong><p>ALLOW/RESIZE may proceed to a separate approval/execution stage. REVIEW, BLOCK, and PAUSE stop the action. The public MCP intentionally exposes no execution tool.</p></div></li>
+      <li><div><strong>Inspect the FLIGHT RECORDER.</strong><p>Intent, evidence, policy checks, drift findings, verdict, runtime before/after, and SHA-256 chain hashes are recorded for replay and tamper-evident inspection.</p></div></li>
+      <li><div><strong>Recover deliberately.</strong><p>A PAUSED or EMERGENCY runtime never heals implicitly. Investigate the cause, then use the explicit recovery control when it is safe to resume.</p></div></li>
+    </ol>
+  </section>
+
+  <section class="panel guide-section" aria-labelledby="builder-title"><div class="panel-heading"><div><p class="eyebrow">AGENT BUILDER</p><h2 id="builder-title">Connect Codex, Binance Agent OS, and CIRCUIT.</h2></div><span class="protocol-chip">MCP</span></div>
+    <p class="panel-copy">A compatible host can connect to both MCP servers. Keep authentication in the host secure store and discover Binance capabilities rather than inventing tool names.</p>
+    <pre class="guide-code">codex mcp add binance --url https://agent.binance.com/mcp/agentic
+codex mcp add circuit --url https://circuit-agent-os.netlify.app/mcp/circuit
+codex mcp list
+codex</pre>
+    <p class="muted-note">For a safety-first proof, use Binance read-only market capabilities. CIRCUIT's public MCP surface is advisory/control-plane only.</p>
+    <div class="safe-tools" aria-label="CIRCUIT MCP tools"><code>circuit_status</code><code>circuit_evaluate_intent</code><code>circuit_trace_briefing</code></div>
+    <h3>Example evaluation payload</h3>
+    <pre class="guide-code">{
+  "intent": {
+    "agentId": "my-agent",
+    "semanticIntentId": "bnb-buy-001",
+    "userIntentMode": "TRANSACT",
+    "action": "BUY",
+    "product": "SPOT",
+    "symbol": "BNBUSDT",
+    "asset": "BNB",
+    "quoteAsset": "USDT",
+    "requestedUsd": 8
+  },
+  "scenarioContext": {
+    "price": 745.50,
+    "observedAt": "2026-09-07T14:01:49.994Z",
+    "tickerObservedAt": "2026-09-07T14:01:47.795Z",
+    "bookObservedAt": "2026-09-07T14:01:49.994Z",
+    "spreadBps": 0.134137
+  }
+}</pre>
+    <p class="evidence-boundary"><strong>Evidence boundary:</strong> the verified public proof used live Binance market evidence. Daily spend, concentration, drawdown, volatility, balance/portfolio and prior-settlement values remained simulation/default account-state assumptions, not live Binance account data.</p>
+  </section>
+
+  <section class="panel guide-section" aria-labelledby="control-path-title"><div class="panel-heading"><div><p class="eyebrow">CONTROL PATH</p><h2 id="control-path-title">What runs before execution.</h2></div></div>
+    <section class="control-path" aria-label="CIRCUIT control path">
+      <article class="panel path-card"><span>01</span><p class="eyebrow">FINANCIAL MANDATE</p><h2>Define the envelope.</h2><p>Versioned user constraints become the source of truth.</p></article><div class="path-arrow" aria-hidden="true">→</div>
+      <article class="panel path-card"><span>02</span><p class="eyebrow">POLICY ENGINE</p><h2>Check hard rules.</h2><p>Authorization, scope, caps, budgets, evidence, and settlement are deterministic.</p></article><div class="path-arrow" aria-hidden="true">→</div>
+      <article class="panel path-card"><span>03</span><p class="eyebrow">RUNTIME DRIFT</p><h2>Check the sequence.</h2><p>Retries, frequency, pause state, and market regime are evaluated over time.</p></article><div class="path-arrow" aria-hidden="true">→</div>
+      <article class="panel path-card"><span>04</span><p class="eyebrow">EXECUTION GATEWAY</p><h2>Separate verdict from execution.</h2><p>Only explicitly permitted actions may approach a later execution boundary.</p></article>
+    </section>
+  </section>
+
+  <section class="panel guide-section" aria-labelledby="verdict-title"><div class="panel-heading"><div><p class="eyebrow">VERDICT REFERENCE</p><h2 id="verdict-title">Five outcomes, one deterministic authority.</h2></div></div>
+    <div class="verdict-grid">
+      <article class="verdict-card" data-verdict="ALLOW"><span>PASS</span><strong>ALLOW</strong><p>Intent is inside the active mandate and runtime envelope. It may advance to a separate approval/execution boundary.</p></article>
+      <article class="verdict-card" data-verdict="RESIZE"><span>ADJUST</span><strong>RESIZE</strong><p>Proceed only at a reduced approved amount when the policy engine explicitly returns a safe size.</p></article>
+      <article class="verdict-card" data-verdict="REVIEW"><span>HUMAN</span><strong>REVIEW</strong><p>Conditions require operator judgment before any action can proceed.</p></article>
+      <article class="verdict-card" data-verdict="BLOCK"><span>VETO</span><strong>BLOCK</strong><p>A hard rule failed. The proposed financial mutation must not execute.</p></article>
+      <article class="verdict-card" data-verdict="PAUSE"><span>BREAKER</span><strong>PAUSE</strong><p>Sequence or settlement risk suspends the runtime. Explicit recovery is required.</p></article>
+    </div>
+  </section>
+
+  <section class="panel guide-section" aria-labelledby="reason-title"><div class="panel-heading"><div><p class="eyebrow">REASON CODES</p><h2 id="reason-title">Why CIRCUIT contained an action—and what to do next.</h2></div></div>
+    <div class="reason-grid">
+      <article class="reason-card"><span>LIMIT</span><code>ORDER_CAP_EXCEEDED</code><p>The requested USD exceeds the per-action cap. Reduce the proposal or explicitly activate a new mandate.</p></article>
+      <article class="reason-card"><span>BUDGET</span><code>DAILY_BUDGET_EXCEEDED</code><p>The action would cross the daily spend envelope. Stop or wait for a legitimate new budget period/mandate.</p></article>
+      <article class="reason-card"><span>SCOPE</span><code>PRODUCT_NOT_ALLOWED</code><p>The product is outside the mandate, such as Futures under a Spot-only policy. Do not silently widen permissions.</p></article>
+      <article class="reason-card"><span>EVIDENCE</span><code>EVIDENCE_STALE</code><p>Required evidence is too old, future-dated, or unverifiable. Refresh evidence before reevaluation.</p></article>
+      <article class="reason-card"><span>RETRY</span><code>DUPLICATE_SEMANTIC_INTENT</code><p>A semantically repeated action may duplicate a prior mutation. Resolve prior settlement before retrying.</p></article>
+      <article class="reason-card"><span>SEQUENCE</span><code>ORDER_FREQUENCY_ANOMALY</code><p>Individually valid actions formed an unsafe burst. Inspect the agent loop before recovery.</p></article>
+      <article class="reason-card"><span>MARKET</span><code>ABNORMAL_MARKET_REGIME</code><p>Observed volatility is outside the expected envelope. Route to review or pause according to mandate policy.</p></article>
+      <article class="reason-card"><span>SETTLEMENT</span><code>UNCERTAIN_PRIOR_SETTLEMENT</code><p>A previous mutation may still be pending or unknown. Fail closed until settlement becomes certain.</p></article>
+    </div>
+  </section>
+
+  <section class="panel principle-strip"><div><p class="eyebrow">CORE PRINCIPLE</p><h2>Authorization is not a permanent safety guarantee.</h2></div><p>CIRCUIT is designed to fail closed when evidence is stale, settlement is uncertain, or runtime behavior drifts outside the user-authorized envelope. AI can interpret and explain; deterministic code owns the veto.</p><div class="guide-cta-row"><a class="button-secondary" href="/proof/">Verified proof →</a><a class="button-secondary" href="/simulation/#judge-mode">Judge Mode →</a><a class="button-secondary" href="/mission-control/">Mission Control →</a></div></section>
 </main><footer class="site-footer"><a class="footer-brand" href="/"><img src="/assets/circuit-mark.svg" alt=""><span>CIRCUIT</span></a><p>Continuous Intent & Runtime Control for User-authorized Intelligent Transactions</p><small>Simulation-first demo • deterministic policy veto • no guaranteed trading performance</small></footer><script type="module" src="/shared.js"></script></body></html>

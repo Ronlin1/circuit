@@ -8,6 +8,16 @@ function normalizePath(value){
   return path==='/'?'/':`${path.replace(/\/+$/,'')}/`;
 }
 
+function ensureProofNavigation(){
+  const nav=document.querySelector('.site-nav');
+  if(!nav||nav.querySelector('a[href="/proof/"]')) return;
+  const link=document.createElement('a');
+  link.href='/proof/';
+  link.textContent='Proof';
+  const before=nav.querySelector('a[href="/how-it-works/"]');
+  nav.insertBefore(link,before??null);
+}
+
 function markActiveNavigation(){
   const current=normalizePath(window.location.pathname);
   document.querySelectorAll('.site-nav a').forEach(link=>{
@@ -44,6 +54,7 @@ async function checkHealth(){
   }
 }
 
+ensureProofNavigation();
 markActiveNavigation();
 setupMobileNavigation();
 checkHealth();

@@ -20,6 +20,8 @@ function liveSymbol(value='BNBUSDT'){
   return symbol;
 }
 
+function executionCount(adapter){return Array.isArray(adapter?.executions)?adapter.executions.length:0}
+
 async function evaluateLiveSimulation(body,services){
   const requestedUsd=Number(body.requestedUsd);
   if(!Number.isFinite(requestedUsd)||requestedUsd<=0) throw new TypeError('requestedUsd must be positive');
@@ -41,6 +43,7 @@ async function evaluateLiveSimulation(body,services){
     createdAt:now,
   });
   const mandate=services.getCurrentMandate();
+  const executionsBefore=executionCount(services.adapter);
   const trace=await services.gateway.evaluate(intent,{mandate,now,scenarioContext:{
     price:market.price,
     observedAt:market.observedAt,
@@ -48,9 +51,11 @@ async function evaluateLiveSimulation(body,services){
     bookObservedAt:market.observedAt,
     spreadBps:market.spreadBps,
   }});
+  const executionsAfter=executionCount(services.adapter);
+  const binanceWrites=Math.max(0,executionsAfter-executionsBefore);
   services.events.publish('trace',trace);
   services.events.publish('runtime',{agentId:intent.agentId,state:services.gateway.runtimeState(intent.agentId)});
-  return {market,trace,accountState:'SIMULATION_DEFAULTS',binanceWrites:0,executionAttempted:false};
+  return {market,trace,accountState:'SIMULATION_DEFAULTS',binanceWrites,executionAttempted:binanceWrites>0};
 }
 
 export async function routeRequest(req,res,services){

@@ -18,6 +18,11 @@ function ensureProofNavigation(){
   nav.insertBefore(link,before??null);
 }
 
+function ensureGuideNavigation(){
+  const link=document.querySelector('.site-nav a[href="/how-it-works/"]');
+  if(link) link.textContent='Guide';
+}
+
 function markActiveNavigation(){
   const current=normalizePath(window.location.pathname);
   document.querySelectorAll('.site-nav a').forEach(link=>{
@@ -55,6 +60,7 @@ async function checkHealth(){
 }
 
 ensureProofNavigation();
+ensureGuideNavigation();
 markActiveNavigation();
 setupMobileNavigation();
 checkHealth();

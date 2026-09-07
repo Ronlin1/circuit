@@ -1,97 +1,53 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#070707"><meta name="description" content="Operational CIRCUIT dashboard for financial mandates, runtime state and traces."><title>Mission Control — CIRCUIT</title><link rel="icon" href="/assets/circuit-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/product.css"></head><body><a class="skip-link" href="#main">Skip to main content</a><div class="ambient ambient-a" aria-hidden="true"></div><div class="ambient ambient-b" aria-hidden="true"></div><header class="site-header">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#070707"><meta name="description" content="Operational CIRCUIT dashboard for financial mandates, runtime state, decision intelligence and traces."><title>Mission Control — CIRCUIT</title><link rel="icon" href="/assets/circuit-mark.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/product.css"><link rel="stylesheet" href="/hardening.css"></head><body><a class="skip-link" href="#main">Skip to main content</a><div class="ambient ambient-a" aria-hidden="true"></div><div class="ambient ambient-b" aria-hidden="true"></div><header class="site-header">
   <a class="site-brand" href="/" aria-label="CIRCUIT home"><img src="/assets/circuit-mark.svg" alt=""><span><strong>CIRCUIT</strong><small>Runtime Control Plane for Agentic Finance</small></span></a>
   <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation"><span></span><span></span></button><nav class="site-nav" aria-label="Primary navigation">
-    <a href="/">Home</a><a href="/mission-control/">Mission Control</a><a href="/simulation/">Simulation</a><a href="/how-it-works/">How it Works</a><a href="/live-agents/">Live Agents</a><a href="/about/">About</a>
+    <a href="/">Home</a><a href="/mission-control/">Mission Control</a><a href="/simulation/">Simulation</a><a href="/proof/">Proof</a><a href="/how-it-works/">How it Works</a><a href="/live-agents/">Live Agents</a><a href="/about/">About</a>
   </nav>
   <div class="nav-status"><span class="live-indicator" data-live-indicator><i></i><b>LIVE DEMO</b></span></div>
 </header><div class="dashboard-statusbar"><div><span>ENVIRONMENT</span><b id="environment-badge">SIMULATION</b></div><div><span>RUNTIME</span><b id="runtime-state">HEALTHY</b></div><div><span>TRANSPORT</span><b>HTTP + MCP</b></div><div><span>BOOT</span><b id="dashboard-boot-state">CHECKING</b></div></div><main id="main" class="shell">
     <section class="hero panel hero-panel" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <p class="eyebrow">MISSION CONTROL</p>
-        <h1 id="hero-title">See the control plane<br><span>before execution.</span></h1>
-        <p class="hero-lede">Inspect the active mandate, runtime health, policy verdicts, traces, and circuit-breaker state of the supervised agent.</p>
-        <div class="hero-meta">
-          <span><strong>Deterministic veto</strong> over LLM reasoning</span>
-          <span><strong>Sequence-aware</strong> runtime supervision</span>
-          <span><strong>Hash-linked</strong> flight recorder</span>
-        </div>
-      </div>
-      <div class="circuit-visual" aria-hidden="true">
-        <div class="ring ring-1"></div><div class="ring ring-2"></div><div class="ring ring-3"></div>
-        <div class="core"><span>ACTIVE</span><strong>CIRCUIT</strong><small>SUPERVISOR</small></div>
-        <div class="orbit-stage" aria-hidden="true"><div class="orbit-arm" style="--phase:0s"><span class="orbit-label">INTENT</span></div><div class="orbit-arm" style="--phase:-4s"><span class="orbit-label">POLICY</span></div><div class="orbit-arm" style="--phase:-8s"><span class="orbit-label">DRIFT</span></div><div class="orbit-arm" style="--phase:-12s"><span class="orbit-label">EXECUTION</span></div></div>
-      </div>
+      <div class="hero-copy"><p class="eyebrow">MISSION CONTROL</p><h1 id="hero-title">See the control plane<br><span>before execution.</span></h1><p class="hero-lede">Inspect the active mandate, runtime state, real decision distribution, latest verdict, evidence freshness, and tamper-evident Flight Recorder.</p><div class="hero-meta"><span><strong>Deterministic veto</strong> over LLM reasoning</span><span><strong>Trace-derived</strong> operational intelligence</span><span><strong>Hash-linked</strong> flight recorder</span></div></div>
+      <div class="circuit-visual" aria-hidden="true"><div class="ring ring-1"></div><div class="ring ring-2"></div><div class="ring ring-3"></div><div class="core"><span>ACTIVE</span><strong>CIRCUIT</strong><small>SUPERVISOR</small></div><div class="orbit-stage" aria-hidden="true"><div class="orbit-arm" style="--phase:0s"><span class="orbit-label">INTENT</span></div><div class="orbit-arm" style="--phase:-4s"><span class="orbit-label">POLICY</span></div><div class="orbit-arm" style="--phase:-8s"><span class="orbit-label">DRIFT</span></div><div class="orbit-arm" style="--phase:-12s"><span class="orbit-label">EXECUTION</span></div></div></div>
+    </section>
+
+    <section class="decision-intelligence" aria-label="Decision intelligence">
+      <article class="decision-stat"><span>Total decisions</span><strong id="decision-total">0</strong><small>Recorded Flight Recorder traces</small></article>
+      <article class="decision-stat"><span>Allowed</span><strong id="decision-allow">0</strong><small>ALLOW + RESIZE verdicts</small></article>
+      <article class="decision-stat"><span>Contained</span><strong id="decision-contained">0</strong><small>BLOCK + PAUSE verdicts</small></article>
+      <article class="decision-stat"><span>Review</span><strong id="decision-review">0</strong><small>Human judgment requested</small></article>
+      <article class="decision-stat"><span>Paused</span><strong id="decision-paused">0</strong><small>Circuit-breaker interventions</small></article>
+      <article class="decision-stat integrity"><span>Trace chain</span><strong id="trace-integrity">CHECKING</strong><small>Hash-link integrity from health endpoint</small></article>
+    </section>
+
+    <section class="latest-grid">
+      <article id="latest-decision" class="panel latest-decision-card"><div class="panel-heading"><div><p class="eyebrow">LATEST DECISION</p><h2 id="latest-intent">No decision recorded</h2></div><span id="latest-verdict" class="status-chip">—</span></div><p class="muted-note">The most recent real dashboard trace appears here. It is derived from the Flight Recorder, not a synthetic score.</p><div id="latest-reasons" class="latest-reasons"><code>WAITING_FOR_TRACE</code></div><div class="latest-meta"><span>Evidence age <strong id="latest-evidence-age">—</strong></span><span>Open the trace below for policy checks, drift findings, and hashes.</span></div></article>
+      <article class="panel proof-mini"><div class="proof-badge">VERIFIED LIVE PROOF</div><span>BINANCE AGENT OS × CIRCUIT</span><strong>Real market evidence reached the deterministic control path.</strong><p>Recorded proof, not a continuously authenticated Binance session on this public dashboard.</p><dl><dt>Evidence → trace</dt><dd>MATCHED</dd><dt>$100 proposal</dt><dd>BLOCK</dd><dt>$8 proposal</dt><dd>ALLOW</dd><dt>Binance writes</dt><dd>0</dd></dl><a href="/proof/">Inspect canonical proof →</a></article>
     </section>
 
     <section class="grid grid-primary">
-      <article id="mandate-card" class="panel mandate-card">
-        <div class="panel-heading"><div><p class="eyebrow">FINANCIAL MANDATE</p><h2>Immutable operating envelope</h2></div><span class="status-chip">ACTIVE</span></div>
-        <div class="mandate-name" id="mandate-name">Loading mandate…</div>
-        <div class="limit-grid">
-          <div class="metric"><span>Order cap</span><strong id="limit-order">—</strong></div>
-          <div class="metric"><span>Daily budget</span><strong id="limit-daily">—</strong></div>
-          <div class="metric"><span>Concentration</span><strong id="limit-concentration">—</strong></div>
-          <div class="metric"><span>Drawdown</span><strong id="limit-drawdown">—</strong></div>
-        </div>
-        <div class="token-row" id="allowed-assets"></div>
-        <div class="policy-note"><span class="policy-icon">◆</span><p>Worker-agent text cannot mutate this active mandate. Only an explicit activation creates a new operating envelope.</p></div>
-      </article>
+      <article id="mandate-card" class="panel mandate-card"><div class="panel-heading"><div><p class="eyebrow">FINANCIAL MANDATE</p><h2>Immutable operating envelope</h2></div><span class="status-chip">ACTIVE</span></div><div class="mandate-name" id="mandate-name">Loading mandate…</div><div class="limit-grid"><div class="metric"><span>Order cap</span><strong id="limit-order">—</strong></div><div class="metric"><span>Daily budget</span><strong id="limit-daily">—</strong></div><div class="metric"><span>Concentration</span><strong id="limit-concentration">—</strong></div><div class="metric"><span>Drawdown</span><strong id="limit-drawdown">—</strong></div></div><div class="token-row" id="allowed-assets"></div><div class="policy-note"><span class="policy-icon">◆</span><p>Worker-agent text cannot mutate this active mandate. Only explicit activation creates a new operating envelope.</p></div></article>
 
-      <article id="runtime-health" class="panel runtime-panel">
-        <div class="panel-heading"><div><p class="eyebrow">RUNTIME HEALTH</p><h2>Control envelope</h2></div><span id="runtime-score" class="score">100</span></div>
-        <div class="health-list">
-          <div class="health-item"><div><span>Intent alignment</span><small>User authorization ↔ agent proposal</small></div><div class="health-value"><strong id="intent-alignment">100%</strong><i class="bar"><b style="width:100%"></b></i></div></div>
-          <div class="health-item"><div><span>Budget consumption</span><small>Current demo envelope</small></div><div class="health-value"><strong id="budget-usage">0%</strong><i class="bar"><b id="budget-bar" style="width:0%"></b></i></div></div>
-          <div class="health-item"><div><span>Behavior state</span><small>Sequence and retry analysis</small></div><div class="health-value"><strong id="behavior-state">NORMAL</strong></div></div>
-          <div class="health-item"><div><span>Market regime</span><small>Volatility versus baseline</small></div><div class="health-value"><strong id="market-regime">NORMAL</strong></div></div>
-          <div class="health-item"><div><span>Evidence freshness</span><small>Fail closed if stale</small></div><div class="health-value"><strong id="evidence-freshness">LIVE</strong></div></div>
-        </div>
-      </article>
+      <article id="runtime-health" class="panel runtime-panel"><div class="panel-heading"><div><p class="eyebrow">RUNTIME STATE</p><h2>Defensible control facts</h2></div><span class="protocol-chip">TRACE-DERIVED</span></div><div class="health-list"><div class="runtime-fact"><span>Behavior state</span><strong id="behavior-state">NORMAL</strong></div><div class="runtime-fact"><span>Market regime</span><strong id="market-regime">NORMAL</strong></div><div class="runtime-fact"><span>Evidence freshness</span><strong id="evidence-freshness">NO TRACE</strong></div><div class="runtime-fact"><span>Execution boundary</span><strong>SEPARATE GATE</strong></div><div class="runtime-fact"><span>Recovery policy</span><strong>EXPLICIT ONLY</strong></div></div><p class="muted-note">These values reflect the latest recorded decision/runtime state. CIRCUIT does not manufacture a confidence or safety score.</p></article>
     </section>
 
-    <section class="panel agent-interface-panel" aria-labelledby="agent-interface-title">
-      <div class="agent-interface-copy">
-        <div class="panel-heading"><div><p class="eyebrow">AGENT INTERFACE</p><h2 id="agent-interface-title">MCP-native supervisor</h2></div><span class="protocol-chip">MCP 2026-07-28</span></div>
-        <p class="panel-copy">Connect a compatible AI host to inspect CIRCUIT state, submit typed action intents for deterministic verdicts, and request tamper-evident trace briefings.</p>
-        <div class="agent-tools" aria-label="Available CIRCUIT MCP tools"><code>circuit_status</code><code>circuit_evaluate_intent</code><code>circuit_trace_briefing</code></div>
-      </div>
-      <div class="endpoint-card">
-        <span>STATELESS MCP ENDPOINT</span>
-        <code>/mcp/circuit</code>
-        <small>Read • propose • evaluate • explain</small>
-      </div>
-    </section>
+    <section class="panel agent-interface-panel" aria-labelledby="agent-interface-title"><div class="agent-interface-copy"><div class="panel-heading"><div><p class="eyebrow">AGENT INTERFACE</p><h2 id="agent-interface-title">MCP-native supervisor</h2></div><span class="protocol-chip">MCP 2026-07-28</span></div><p class="panel-copy">Connect a compatible AI host to inspect CIRCUIT state, submit typed action intents for deterministic verdicts, and request tamper-evident trace briefings.</p><div class="agent-tools" aria-label="Available CIRCUIT MCP tools"><code>circuit_status</code><code>circuit_evaluate_intent</code><code>circuit_trace_briefing</code></div></div><div class="endpoint-card"><span>STATELESS MCP ENDPOINT</span><code>/mcp/circuit</code><small>Read • propose • evaluate • explain</small></div></section>
 
     <section class="grid grid-secondary">
-      <article class="panel scenarios-panel">
-        <div class="panel-heading"><div><p class="eyebrow">ADVERSARIAL LAB</p><h2>Attack the agent</h2></div><span class="counter">8 scenarios</span></div>
-        <p class="panel-copy">Run deterministic failures live. CIRCUIT should contain each one before unsafe execution.</p>
-        <div class="scenario-grid">
-          <button class="scenario scenario-safe" data-scenario="safe-spot-buy"><span class="scenario-index">01</span><span><strong>Safe Spot Buy</strong><small>Expected: ALLOW</small></span><b>→</b></button>
-          <button class="scenario" data-scenario="oversize-order"><span class="scenario-index">02</span><span><strong>Oversize Order</strong><small>$100 under a $10 cap</small></span><b>→</b></button>
-          <button class="scenario" data-scenario="forbidden-futures"><span class="scenario-index">03</span><span><strong>Forbidden Futures</strong><small>Spot mandate drift</small></span><b>→</b></button>
-          <button class="scenario" data-scenario="duplicate-retry-loop"><span class="scenario-index">04</span><span><strong>Duplicate Retry Loop</strong><small>Uncertain prior settlement</small></span><b>→</b></button>
-          <button class="scenario" data-scenario="frequency-breaker"><span class="scenario-index">05</span><span><strong>Frequency Breaker</strong><small>Valid orders, unsafe sequence</small></span><b>→</b></button>
-          <button class="scenario" data-scenario="stale-evidence"><span class="scenario-index">06</span><span><strong>Stale Evidence</strong><small>Fail-closed freshness</small></span><b>→</b></button>
-          <button class="scenario" data-scenario="regime-drift"><span class="scenario-index">07</span><span><strong>Regime Drift</strong><small>Volatility outside envelope</small></span><b>→</b></button>
-          <button class="scenario" data-scenario="prompt-injection"><span class="scenario-index">08</span><span><strong>Prompt Injection</strong><small>“Ignore previous limits”</small></span><b>→</b></button>
-        </div>
-      </article>
+      <article class="panel scenarios-panel"><div class="panel-heading"><div><p class="eyebrow">ADVERSARIAL LAB</p><h2>Attack the agent</h2></div><span class="counter">8 scenarios</span></div><p class="panel-copy">Run deterministic failures live. CIRCUIT should contain each one before unsafe execution.</p><div class="scenario-grid">
+        <button class="scenario scenario-safe" data-scenario="safe-spot-buy"><span class="scenario-index">01</span><span><strong>Safe Spot Buy</strong><small>Expected: ALLOW</small></span><b>→</b></button>
+        <button class="scenario" data-scenario="oversize-order"><span class="scenario-index">02</span><span><strong>Oversize Order</strong><small>$100 under a $10 cap</small></span><b>→</b></button>
+        <button class="scenario" data-scenario="forbidden-futures"><span class="scenario-index">03</span><span><strong>Forbidden Futures</strong><small>Spot mandate drift</small></span><b>→</b></button>
+        <button class="scenario" data-scenario="duplicate-retry-loop"><span class="scenario-index">04</span><span><strong>Duplicate Retry Loop</strong><small>Uncertain prior settlement</small></span><b>→</b></button>
+        <button class="scenario" data-scenario="frequency-breaker"><span class="scenario-index">05</span><span><strong>Frequency Breaker</strong><small>Valid orders, unsafe sequence</small></span><b>→</b></button>
+        <button class="scenario" data-scenario="stale-evidence"><span class="scenario-index">06</span><span><strong>Stale Evidence</strong><small>Fail-closed freshness</small></span><b>→</b></button>
+        <button class="scenario" data-scenario="regime-drift"><span class="scenario-index">07</span><span><strong>Regime Drift</strong><small>Volatility outside envelope</small></span><b>→</b></button>
+        <button class="scenario" data-scenario="prompt-injection"><span class="scenario-index">08</span><span><strong>Prompt Injection</strong><small>“Ignore previous limits”</small></span><b>→</b></button>
+      </div></article>
 
-      <article class="panel activity-panel">
-        <div class="panel-heading"><div><p class="eyebrow">FLIGHT RECORDER</p><h2>Live activity</h2></div><button id="verify-chain" class="text-button" type="button">Verify chain</button></div>
-        <div id="activity-timeline" class="timeline" aria-live="polite"><div class="empty-state"><span>◇</span><strong>No decisions recorded</strong><small>Launch a scenario to generate the first trace.</small></div></div>
-      </article>
+      <article class="panel activity-panel"><div class="panel-heading"><div><p class="eyebrow">FLIGHT RECORDER</p><h2>Decision traces</h2></div><button id="verify-chain" class="text-button" type="button">Verify chain</button></div><div class="trace-controls" aria-label="Filter traces"><button class="trace-filter" data-trace-filter="ALL" aria-pressed="true">ALL</button><button class="trace-filter" data-trace-filter="ALLOW" aria-pressed="false">ALLOW</button><button class="trace-filter" data-trace-filter="BLOCK" aria-pressed="false">BLOCK</button><button class="trace-filter" data-trace-filter="REVIEW" aria-pressed="false">REVIEW</button><button class="trace-filter" data-trace-filter="PAUSE" aria-pressed="false">PAUSE</button></div><div id="activity-timeline" class="timeline" aria-live="polite"><div class="empty-state"><span>◇</span><strong>No decisions recorded</strong><small>Launch a scenario to generate the first trace.</small></div></div></article>
     </section>
 
-    <section class="panel control-strip">
-      <div><p class="eyebrow">CIRCUIT BREAKER</p><h2>Runtime intervention</h2><p>PAUSED and EMERGENCY states never recover implicitly.</p></div>
-      <div class="control-actions"><span id="active-agent-label">No paused agent</span><button id="recover-agent" class="button-primary" type="button" disabled>Explicit recovery</button></div>
-    </section>
-  </main><dialog id="trace-inspector" class="trace-dialog">
-    <div class="dialog-header"><div><p class="eyebrow">TRACE INSPECTOR</p><h2 id="trace-title">Decision trace</h2></div><button class="dialog-close" data-close-dialog aria-label="Close trace inspector">×</button></div>
-    <div id="trace-content" class="trace-content"></div>
-  </dialog>
-
+    <section class="panel control-strip"><div><p class="eyebrow">CIRCUIT BREAKER</p><h2>Runtime intervention</h2><p>PAUSED and EMERGENCY states never recover implicitly.</p></div><div class="control-actions"><span id="active-agent-label">No paused agent</span><button id="recover-agent" class="button-primary" type="button" disabled>Explicit recovery</button></div></section>
+  </main><dialog id="trace-inspector" class="trace-dialog"><div class="dialog-header"><div><p class="eyebrow">TRACE INSPECTOR</p><h2 id="trace-title">Decision trace</h2></div><button class="dialog-close" data-close-dialog aria-label="Close trace inspector">×</button></div><div id="trace-content" class="trace-content"></div></dialog>
   <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div><footer class="site-footer"><a class="footer-brand" href="/"><img src="/assets/circuit-mark.svg" alt=""><span>CIRCUIT</span></a><p>Continuous Intent & Runtime Control for User-authorized Intelligent Transactions</p><small>Simulation-first demo • deterministic policy veto • no guaranteed trading performance</small></footer><script type="module" src="/app.js"></script><script type="module" src="/shared.js"></script></body></html>

@@ -6,8 +6,9 @@ import { MockBinanceAdapter } from '../adapters/mock-binance.js';
 import { BinanceMcpAdapter } from '../adapters/binance-mcp.js';
 import { ExecutionGateway } from '../execution/gateway.js';
 import { SseHub } from '../server/sse.js';
+import { fetchBinancePublicMarket } from '../market/binance-public.js';
 
-export function createAppServices({dbPath=':memory:',mode='simulation',now,clock=()=>new Date().toISOString(),adapter:providedAdapter,mcpConfig={},realtime=true}={}) {
+export function createAppServices({dbPath=':memory:',mode='simulation',now,clock=()=>new Date().toISOString(),adapter:providedAdapter,mcpConfig={},realtime=true,marketDataProvider:providedMarketDataProvider}={}) {
   if(typeof clock!=='function') throw new TypeError('clock must be a function');
   const seedNow=now??clock();
   const currentTime=()=>now??clock();
@@ -16,6 +17,8 @@ export function createAppServices({dbPath=':memory:',mode='simulation',now,clock
   const runtimeStore=new RuntimeStore();
   const normalizedMode=String(mode).toLowerCase();
   const adapter=providedAdapter ?? (normalizedMode==='live' ? new BinanceMcpAdapter({url:mcpConfig.url??process.env.BINANCE_MCP_URL??'https://agent.binance.com/mcp/agentic',bearerToken:mcpConfig.bearerToken??process.env.BINANCE_MCP_BEARER_TOKEN,toolNames:mcpConfig.toolNames??{ticker:process.env.BINANCE_MCP_TICKER_TOOL,orderBook:process.env.BINANCE_MCP_ORDER_BOOK_TOOL,account:process.env.BINANCE_MCP_ACCOUNT_TOOL,spotOrder:process.env.BINANCE_MCP_SPOT_ORDER_TOOL}}) : new MockBinanceAdapter({now:seedNow}));
+  const marketDataProvider=providedMarketDataProvider??fetchBinancePublicMarket;
+  if(typeof marketDataProvider!=='function') throw new TypeError('marketDataProvider must be a function');
   const gateway=new ExecutionGateway({adapter,runtimeStore,recorder});
   const events=new SseHub();
   const mandates=new Map();
@@ -24,7 +27,7 @@ export function createAppServices({dbPath=':memory:',mode='simulation',now,clock
   let currentMandateId=seed.id;
 
   return {
-    mode:String(mode).toUpperCase(), realtime:Boolean(realtime), now:seedNow, currentTime, persistence, recorder, runtimeStore, adapter, gateway, events, mandates,
+    mode:String(mode).toUpperCase(), realtime:Boolean(realtime), now:seedNow, currentTime, persistence, recorder, runtimeStore, adapter, gateway, events, mandates, marketDataProvider,
     getCurrentMandate(){return mandates.get(currentMandateId)??null;},
     getMandate(id){return mandates.get(id)??null;},
     storeMandate(mandate){mandates.set(mandate.id,mandate);return mandate;},

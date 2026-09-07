@@ -33,11 +33,13 @@ test('catalog exposes exactly the eight competition scenarios', () => {
 
 for (const [id,[decision,reason]] of Object.entries(expectations)) {
   test(`${id} terminates as ${decision}${reason ? ` with ${reason}` : ''}`, async () => {
-    const result=await runScenario(id,services());
+    const svc=services();
+    const result=await runScenario(id,svc);
     assert.equal(result.trace.decision,decision);
     if(reason) assert.ok(result.trace.reasonCodes.includes(reason), `${reason} missing from ${result.trace.reasonCodes}`);
     if(id==='safe-spot-buy') {
-      assert.equal(result.execution.status,'SIMULATED_FILLED');
+      assert.equal(result.execution,null);
+      assert.equal(svc.adapter.executions.length,0);
     }
     if(id==='prompt-injection') {
       assert.match(result.trace.intent.rationale,/ignore all previous restrictions/i);
